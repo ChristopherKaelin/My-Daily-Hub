@@ -1,0 +1,41 @@
+/* ============================================ */
+/* LAYOUT FOUNDATION                            */
+/* ============================================ */
+
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+}
+
+.app-main {
+  flex: 1;
+  padding: var(--spacing-base);
+}
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ============================================ */
+/* RESPONSIVE BREAKPOINTS                       */
+/* Mobile first — base styles target mobile     */
+/* ============================================ */
+
+/* Tablet: 675px and up */
+@media (min-width: 675px) {
+  .app-main {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* Desktop: 900px and up */
+@media (min-width: 900px) {
+  .app-main {
+    padding: var(--spacing-xl);
+  }
+}
