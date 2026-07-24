@@ -1,3 +1,14 @@
+import homeIcon from '../../assets/home.png'
+import tasksIcon from '../../assets/task-tracker.png'
+import goalsIcon from '../../assets/habit-definitions.png'
+import habitsIcon from '../../assets/habit-tracking.png'
+import journalIcon from '../../assets/journal-entry-solid.png'
+import linksIcon from '../../assets/favorite-links.png'
+import quotesIcon from '../../assets/favorite-quotes-1.png'
+import bibleIcon from '../../assets/bible-verse.png'
+import weatherIcon from '../../assets/weather.png'
+import settingsIcon from '../../assets/user-settings.png'
+
 type Tool =
   | 'home'
   | 'tasks'
@@ -16,16 +27,16 @@ interface SidebarProps {
 }
 
 const navItems: { tool: Tool; label: string; icon: string }[] = [
-  { tool: 'home',     label: 'Home',     icon: '/my-daily-hub/src/assets/home.png' },
-  { tool: 'tasks',    label: 'Tasks',    icon: '/my-daily-hub/src/assets/task-tracker.png' },
-  { tool: 'goals',    label: 'Goals',    icon: '/my-daily-hub/src/assets/habit-definitions.png' },
-  { tool: 'habits',   label: 'Habits',   icon: '/my-daily-hub/src/assets/habit-tracking.png' },
-  { tool: 'journal',  label: 'Journal',  icon: '/my-daily-hub/src/assets/journal-entry-solid.png' },
-  { tool: 'links',    label: 'Links',    icon: '/my-daily-hub/src/assets/favorite-links.png' },
-  { tool: 'quotes',   label: 'Quotes',   icon: '/my-daily-hub/src/assets/favorite-quotes-1.png' },
-  { tool: 'bible',    label: 'Bible',    icon: '/my-daily-hub/src/assets/bible-verse.png' },
-  { tool: 'weather',  label: 'Weather',  icon: '/my-daily-hub/src/assets/weather.png' },
-  { tool: 'settings', label: 'Settings', icon: '/my-daily-hub/src/assets/user-settings.png' },
+  { tool: 'home',     label: 'Home',     icon: homeIcon },
+  { tool: 'tasks',    label: 'Tasks',    icon: tasksIcon },
+  { tool: 'goals',    label: 'Goals',    icon: goalsIcon },
+  { tool: 'habits',   label: 'Habits',   icon: habitsIcon },
+  { tool: 'journal',  label: 'Journal',  icon: journalIcon },
+  { tool: 'links',    label: 'Links',    icon: linksIcon },
+  { tool: 'quotes',   label: 'Quotes',   icon: quotesIcon },
+  { tool: 'bible',    label: 'Bible',    icon: bibleIcon },
+  { tool: 'weather',  label: 'Weather',  icon: weatherIcon },
+  { tool: 'settings', label: 'Settings', icon: settingsIcon },
 ]
 
 function Sidebar({ activeTool, onToolSelect }: SidebarProps) {
