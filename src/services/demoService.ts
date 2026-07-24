@@ -1,7 +1,9 @@
+import { supabase } from '../lib/supabaseClient'
 import { DEMO_STORAGE_KEYS } from '../types'
 
-export function isDemoMode(): boolean {
-  return !localStorage.getItem('supabase.auth.token')
+export async function isDemoMode(): Promise<boolean> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session === null
 }
 
 export function clearDemoData(): void {

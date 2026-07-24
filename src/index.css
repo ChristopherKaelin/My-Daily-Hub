@@ -21,7 +21,7 @@ body {
 }
 
 .app-title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-2xl);
   font-weight: 600;
   color: #ffffff;
 }
