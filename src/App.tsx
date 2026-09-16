@@ -1,21 +1,44 @@
 import { useEffect, useState } from 'react'
-import { isDemoMode, initializeDemoData } from './services/demoService'
+import { supabase } from './lib/supabaseClient'
+import { initializeDemoData } from './services/demoService'
 import Header from './components/common/Header'
-import UserSettings from './components/tools/UserSettings/UserSettings'
 import Sidebar, { type Tool } from './components/common/Sidebar'
+import AuthPage from './components/auth/AuthPage'
+import UserSettings from './components/tools/UserSettings/UserSettings'
 
+type AppMode = 'loading' | 'authed' | 'demo'
 
 function App() {
+  const [appMode, setAppMode] = useState<AppMode>('loading')
   const [activeTool, setActiveTool] = useState<Tool>('home')
 
   useEffect(() => {
-  const init = async () => {
-    if (await isDemoMode()) {
-      initializeDemoData()
-    }
-  }
-    init()
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setAppMode('authed')
+      } else {
+        // Stay on loading until user chooses demo or signs in
+        setAppMode('loading')
+      }
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setAppMode('authed')
+      } else {
+        setAppMode('loading')
+      }
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
+
+  const handleDemoMode = () => {
+    initializeDemoData()
+    setAppMode('demo')
+  }
 
   const renderTool = () => {
     switch (activeTool) {
@@ -24,11 +47,26 @@ function App() {
     }
   }
 
+  if (appMode === 'loading') {
+    return <div className="zone-dashboard"><AuthPage onDemoMode={handleDemoMode} /></div>
+  }
+
   return (
     <div className="app-wrapper zone-dashboard">
       <Header />
       <div className="app-body">
-        <Sidebar activeTool={activeTool} onToolSelect={setActiveTool} />
+        <Sidebar
+          activeTool={activeTool}
+          onToolSelect={setActiveTool}
+          appMode={appMode as 'authed' | 'demo'}
+          onAuthAction={async () => {
+            if (appMode === 'authed') {
+              await supabase.auth.signOut()
+            } else {
+              setAppMode('loading')
+            }
+          }}
+        />
         <main className="app-main">
           <div className="container">
             {renderTool()}

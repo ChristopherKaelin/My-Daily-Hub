@@ -26,6 +26,110 @@ body {
   color: #ffffff;
 }
 
+/* ============================================ */
+/* AUTH PAGE                                    */
+/* ============================================ */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: var(--color-secondary);
+  padding: var(--spacing-base);
+  padding-top: 5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.auth-toggle {
+  display: flex;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--spacing-lg);
+}
+
+.auth-toggle-btn {
+  flex: 1;
+  padding: var(--spacing-sm);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--color-primary);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.auth-toggle-btn--active {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: var(--spacing-sm);
+}
+
+.auth-guest {
+  text-align: center;
+  margin-top: var(--spacing-lg);
+}
+
+.auth-guest-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.auth-guest-btn:hover {
+  color: var(--color-link-hover);
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: var(--spacing-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.password-toggle:hover {
+  color: var(--color-primary);
+}
+
 .demo-badge {
   font-size: var(--font-size-xs);
   font-weight: 600;

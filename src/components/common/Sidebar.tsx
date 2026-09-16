@@ -1,3 +1,5 @@
+import loginIcon from '../../assets/login.png'
+import logoutIcon from '../../assets/logout.png'
 import homeIcon from '../../assets/home.png'
 import tasksIcon from '../../assets/task-tracker.png'
 import goalsIcon from '../../assets/habit-definitions.png'
@@ -24,6 +26,8 @@ type Tool =
 interface SidebarProps {
   activeTool: Tool
   onToolSelect: (tool: Tool) => void
+  appMode: 'authed' | 'demo'
+  onAuthAction: () => void
 }
 
 const navItems: { tool: Tool; label: string; icon: string }[] = [
@@ -39,7 +43,7 @@ const navItems: { tool: Tool; label: string; icon: string }[] = [
   { tool: 'settings', label: 'Settings', icon: settingsIcon },
 ]
 
-function Sidebar({ activeTool, onToolSelect }: SidebarProps) {
+function Sidebar({ activeTool, onToolSelect, appMode, onAuthAction }: SidebarProps) {
   return (
     <nav className="sidebar">
       {navItems.map(({ tool, label, icon }) => (
@@ -53,6 +57,23 @@ function Sidebar({ activeTool, onToolSelect }: SidebarProps) {
           <span className="sidebar-label">{label}</span>
         </button>
       ))}
+
+      <div className="sidebar-divider" />
+
+      <button
+        className="sidebar-item"
+        onClick={onAuthAction}
+        title={appMode === 'authed' ? 'Sign Out' : 'Sign In'}
+      >
+        <img
+          src={appMode === 'authed' ? logoutIcon : loginIcon}
+          alt={appMode === 'authed' ? 'Sign Out' : 'Sign In'}
+          className="sidebar-icon"
+        />
+        <span className="sidebar-label">
+          {appMode === 'authed' ? 'Sign Out' : 'Sign In'}
+        </span>
+      </button>
     </nav>
   )
 }
