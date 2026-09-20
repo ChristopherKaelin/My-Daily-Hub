@@ -5,6 +5,7 @@ import Header from './components/common/Header'
 import Sidebar, { type Tool } from './components/common/Sidebar'
 import AuthPage from './components/auth/AuthPage'
 import UserSettings from './components/tools/UserSettings/UserSettings'
+import Weather from './components/tools/Weather/Weather'
 
 type AppMode = 'loading' | 'authed' | 'demo'
 
@@ -43,6 +44,7 @@ function App() {
   const renderTool = () => {
     switch (activeTool) {
       case 'settings': return <UserSettings />
+      case 'weather': return <Weather />
       default: return <p>Coming soon...</p>
     }
   }

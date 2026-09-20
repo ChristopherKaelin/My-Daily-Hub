@@ -82,6 +82,7 @@ function UserSettings() {
             placeholder="e.g. Lexington, KY"
             maxLength={100}
           />
+          <span className="form-hint">Use city and state/country for best results (e.g. London, UK or Chicago, IL)</span>
         </div>
         <div className="form-group">
           <label htmlFor="weatherUnit">Temperature Unit</label>
