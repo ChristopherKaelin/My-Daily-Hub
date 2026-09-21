@@ -6,6 +6,8 @@ import Sidebar, { type Tool } from './components/common/Sidebar'
 import AuthPage from './components/auth/AuthPage'
 import UserSettings from './components/tools/UserSettings/UserSettings'
 import Weather from './components/tools/Weather/Weather'
+import BibleVerse from './components/tools/BibleVerse/BibleVerse'
+import Dashboard from './components/tools/Dashboard/Dashboard'
 
 type AppMode = 'loading' | 'authed' | 'demo'
 
@@ -45,6 +47,8 @@ function App() {
     switch (activeTool) {
       case 'settings': return <UserSettings />
       case 'weather': return <Weather />
+      case 'bible': return <BibleVerse />
+      case 'home': return <Dashboard />
       default: return <p>Coming soon...</p>
     }
   }

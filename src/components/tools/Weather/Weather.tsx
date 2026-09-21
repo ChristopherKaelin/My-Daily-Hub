@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getUserSettings } from '../../../services/userSettingsService'
 import { getWeather, type WeatherData } from '../../../services/weatherService'
+import CurrentWeatherCard from '../../cards/CurrentWeatherCard'
+
 
 function Weather() {
   const [weather, setWeather] = useState<WeatherData | null>(null)
@@ -12,7 +14,13 @@ function Weather() {
 
   useEffect(() => {
     const updateHours = () => {
-      setVisibleHours(window.innerWidth < 675 ? 4 : 6)
+      if (window.innerWidth < 500) {
+        setVisibleHours(3)
+      } else if (window.innerWidth < 675) {
+        setVisibleHours(4)
+      } else {
+        setVisibleHours(6)
+      }
     }
     updateHours()
     window.addEventListener('resize', updateHours)
@@ -58,31 +66,13 @@ function Weather() {
   if (error) return <p className="form-error">{error}</p>
   if (!weather) return null
 
-  const { current, hourly, forecast } = weather
-  const temp = unit === 'fahrenheit' ? `${current.temp_f}°F` : `${current.temp_c}°C`
-  const feelsLike = unit === 'fahrenheit' ? `${current.feels_like_f}°F` : `${current.feels_like_c}°C`
-  const wind = unit === 'fahrenheit' ? `${current.wind_mph} mph` : `${current.wind_kph} kph`
+  const { hourly, forecast } = weather
 
   return (
     <div className="weather">
 
       <div className="weather-top">
-        <div className="card weather-current">
-          <div className="weather-location">
-            {current.city}, {current.region}
-          </div>
-          <div className="weather-main">
-            <img src={current.condition_icon} alt={current.condition} className="weather-icon-lg" />
-            <div className="weather-temp">{temp}</div>
-          </div>
-          <div className="weather-condition">{current.condition}</div>
-          <div className="weather-details">
-            <span>Feels like {feelsLike}</span>
-            <span>Humidity {current.humidity}%</span>
-            <span>Wind {wind}</span>
-          </div>
-        </div>
-
+        <CurrentWeatherCard weather={weather} unit={unit} />
         <div className="card weather-hourly">
           {hourly.slice(0, visibleHours).map((h) => (
             <div key={h.time} className="weather-hourly-item">

@@ -50,8 +50,9 @@ async function saveAuthSettings(userId: string, settings: Partial<UserSettings>)
     city: settings.city,
     weather_unit: settings.weatherUnit,
     theme: settings.theme,
-  })
+  }, { onConflict: 'user_id' })
 }
+
 
 // --- Public API ---
 

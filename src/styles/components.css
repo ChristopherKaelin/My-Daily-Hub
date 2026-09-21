@@ -101,15 +101,42 @@
   margin-bottom: var(--spacing-base);
 }
 
+.form-hint {
+  font-size: var(--font-size-xs);
+  color: #888;
+}
+
 .input-readonly {
   background-color: #f5f5f5;
   cursor: not-allowed;
   color: #888;
 }
 
-.form-hint {
-  font-size: var(--font-size-xs);
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: var(--spacing-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
   color: #888;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.password-toggle:hover {
+  color: var(--color-primary);
 }
 
 /* ============================================ */
@@ -256,14 +283,8 @@
   color: #666;
 }
 
-.weather-forecast {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-base);
-}
-
 /* ============================================ */
-/* WEATHER HOURLY                               */
+/* WEATHER — HOURLY                             */
 /* ============================================ */
 
 .weather-hourly {
@@ -301,6 +322,16 @@
 .weather-hourly-rain {
   font-size: var(--font-size-xs);
   color: #888;
+}
+
+/* ============================================ */
+/* WEATHER — FORECAST                           */
+/* ============================================ */
+
+.weather-forecast {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-base);
 }
 
 .weather-forecast-day {
@@ -346,5 +377,145 @@
 @media (min-width: 980px) {
   .weather-forecast {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ============================================ */
+/* BIBLE VERSE                                  */
+/* ============================================ */
+
+.bible-verse {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.bible-verse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--spacing-xs);
+}
+
+.bible-verse-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent);
+}
+
+.bible-verse-category {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #888;
+}
+
+.bible-verse-reference {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #888;
+  margin-bottom: var(--spacing-base);
+}
+
+.bible-verse-text {
+  font-size: var(--font-size-lg);
+  font-style: italic;
+  color: var(--color-primary);
+  line-height: 1.7;
+  margin: 0;
+  text-align: center;
+}
+
+/* ============================================ */
+/* BIBLE — PAGE                                 */
+/* ============================================ */
+
+.bible-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.bible-intro {
+  font-size: var(--font-size-sm);
+  color: #666;
+  margin: 0;
+}
+
+.bible-categories {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-base);
+}
+
+.bible-category-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.bible-category-name {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.bible-category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.bible-category-list li {
+  font-size: var(--font-size-sm);
+  color: #555;
+}
+
+@media (min-width: 675px) {
+  .bible-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 980px) {
+  .bible-categories {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================================ */
+/* DASHBOARD                                    */
+/* ============================================ */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.dashboard-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.dashboard-row .bible-verse {
+  max-width: none;
+  margin: 0;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .dashboard-row {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .dashboard-row > * {
+    flex: 1;
   }
 }
