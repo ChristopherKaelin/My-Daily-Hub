@@ -8,9 +8,9 @@ interface TaskPayload {
   userId: string
 }
 
-export default async (req: any, context: any) => {
+export const handler = async (event: any) => {
   // Only allow POST
-  if (req.method !== 'POST') {
+  if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
       body: JSON.stringify({ error: 'Method not allowed' }),
@@ -19,7 +19,7 @@ export default async (req: any, context: any) => {
 
   try {
     // Check API key
-    const apiKey = req.headers['x-api-key']
+    const apiKey = event.headers['x-api-key']
     const expectedApiKey = process.env.TASK_API_KEY
 
     if (!apiKey || apiKey !== expectedApiKey) {
@@ -29,7 +29,7 @@ export default async (req: any, context: any) => {
       }
     }
 
-    const payload: TaskPayload = JSON.parse(req.body)
+    const payload: TaskPayload = JSON.parse(event.body)
 
     // Validate required fields
     if (!payload.title || payload.title.trim() === '') {
