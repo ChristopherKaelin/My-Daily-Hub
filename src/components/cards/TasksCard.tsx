@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { getTasks } from '../../services/tasksService'
 import { type Task } from '../../types'
+import { type Tool } from '../common/Sidebar'
 import styles from './Card.module.css'
 
 interface TasksCardProps {
-  onNavigate?: (tool: string) => void
+  onNavigate?: (tool: Tool) => void
 }
 
 export function TasksCard({ onNavigate }: TasksCardProps) {

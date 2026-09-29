@@ -2,11 +2,12 @@
 import VerseOfTheDayCard from '../../../components/cards/VerseOfTheDayCard'
 import CurrentWeatherCard from '../../cards/CurrentWeatherCard'
 import { TasksCard } from '../../cards/TasksCard'
+import { type Tool } from '../../common/Sidebar'
 import styles from './Dashboard.module.css'
 
 // We'll need to pass the navigation function as a prop from App
 interface DashboardProps {
-  onNavigate?: (tool: string) => void
+  onNavigate?: (tool: Tool) => void
 }
 
 function Dashboard({ onNavigate }: DashboardProps) {

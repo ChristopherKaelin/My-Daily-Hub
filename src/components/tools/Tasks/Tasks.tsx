@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getTasks, createTask, updateTask, deleteTask, completeTask, uncompleteTask } from '../../../services/tasksService'
 import { type Task } from '../../../types'
+import { formatUserDate } from '../../../utils/dateFormatter'
 import styles from './Tasks.module.css'
 
 type SortOption = 'dueDate' | 'priority'
@@ -16,29 +17,41 @@ export function Tasks() {
     title: '',
     description: '',
     dueDate: '',
-    priority: 'medium' as const,
+    priority: 'medium' as 'low' | 'medium' | 'high',
   })
 
   const [editingId, setEditingId] = useState<string | null>(null)
 
   // Load tasks on mount
   useEffect(() => {
-    loadTasks()
-  }, [])
+    let isMounted = true
 
-  async function loadTasks() {
-    try {
-      setLoading(true)
-      setError(null)
-      const data = await getTasks()
-      setTasks(data)
-    } catch (err) {
-      setError('Failed to load tasks')
-      console.error(err)
-    } finally {
-      setLoading(false)
+    const loadTasks = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await getTasks()
+        if (isMounted) {
+          setTasks(data)
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError('Failed to load tasks')
+          console.error(err)
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
     }
-  }
+
+    loadTasks()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   function getSortedTasks(tasksToSort: Task[]): Task[] {
     const sorted = [...tasksToSort]
@@ -291,7 +304,7 @@ export function Tasks() {
                     </span>
                     {task.dueDate && (
                       <span className={styles.dueDate}>
-                        {new Date(task.dueDate).toLocaleDateString()}
+                        {formatUserDate(task.dueDate)}
                       </span>
                     )}
                   </div>
