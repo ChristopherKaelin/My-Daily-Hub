@@ -5,6 +5,7 @@ interface TaskPayload {
   description?: string
   dueDate?: string
   priority?: 'low' | 'medium' | 'high'
+  userId: string
 }
 
 export default async (req: any, context: any) => {
@@ -38,32 +39,29 @@ export default async (req: any, context: any) => {
       }
     }
 
-    // Initialize Supabase client
-    const supabaseUrl = process.env.VITE_SUPABASE_URL
-    const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
+    if (!payload.userId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'User ID is required' }),
+      }
+    }
 
-    if (!supabaseUrl || !supabaseKey) {
+    // Initialize Supabase client with service role key
+    const supabaseUrl = process.env.VITE_SUPABASE_URL
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (!supabaseUrl || !serviceRoleKey) {
       return {
         statusCode: 500,
         body: JSON.stringify({ error: 'Missing Supabase credentials' }),
       }
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    // Get the authenticated user (if any)
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: 'Unauthorized: No authenticated user' }),
-      }
-    }
+    const supabase = createClient(supabaseUrl, serviceRoleKey)
 
     // Insert the task
     const { data, error } = await supabase.from('tasks').insert({
-      user_id: user.id,
+      user_id: payload.userId,
       title: payload.title.trim(),
       description: payload.description || null,
       due_date: payload.dueDate || null,
