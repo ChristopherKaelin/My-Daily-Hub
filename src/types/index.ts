@@ -10,6 +10,20 @@ export interface UserSettings {
   updatedAt: string
 }
 
+// Tasks
+export interface Task {
+  id: string
+  userId: string
+  title: string
+  description: string | null
+  dueDate: string | null
+  priority: 'low' | 'medium' | 'high'
+  isComplete: boolean
+  completedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 // Demo mode storage keys
 export const DEMO_STORAGE_KEYS = {
   USER_SETTINGS: 'mdh_demo_user_settings',

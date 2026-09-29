@@ -7,6 +7,7 @@ import AuthPage from './components/auth/AuthPage'
 import UserSettings from './components/tools/UserSettings/UserSettings'
 import Weather from './components/tools/Weather/Weather'
 import BibleVerse from './components/tools/BibleVerse/BibleVerse'
+import { Tasks } from './components/tools/Tasks/Tasks'
 import Dashboard from './components/tools/Dashboard/Dashboard'
 
 type AppMode = 'loading' | 'authed' | 'demo'
@@ -48,7 +49,8 @@ function App() {
       case 'settings': return <UserSettings />
       case 'weather': return <Weather />
       case 'bible': return <BibleVerse />
-      case 'home': return <Dashboard />
+      case 'tasks': return <Tasks />
+      case 'home': return <Dashboard onNavigate={setActiveTool} />
       default: return <p>Coming soon...</p>
     }
   }

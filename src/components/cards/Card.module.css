@@ -1,0 +1,108 @@
+/* Card Base Styles */
+.card {
+  background-color: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid #d9d0c7;
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardTitleButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.cardTitleButton:hover h3 {
+  color: var(--color-link);
+}
+
+.cardTitle {
+  margin: 0 0 1rem 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+/* Loading, Error, Empty States */
+.cardLoading,
+.cardError,
+.cardEmpty {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.cardError {
+  color: var(--color-error);
+}
+
+/* Tasks List */
+.tasksList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tasksList li {
+  padding: 0;
+  margin: 0;
+}
+
+.taskRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+}
+
+.taskTitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.taskDueDate {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.taskDivider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 0;
+}
+
+/* Mobile */
+@media (max-width: 675px) {
+  .card {
+    padding: var(--spacing-base);
+  }
+
+  .cardTitle {
+    font-size: var(--font-size-base);
+  }
+
+  .taskRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .taskDueDate {
+    white-space: normal;
+  }
+}
