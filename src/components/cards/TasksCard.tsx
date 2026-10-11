@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getTasks } from '../../services/tasksService'
+import { getTasks, sortTasks } from '../../services/tasksService'
 import { type Task } from '../../types'
 import { type Tool } from '../common/Sidebar'
 import styles from './Card.module.css'
@@ -24,17 +24,7 @@ export function TasksCard({ onNavigate }: TasksCardProps) {
       const allTasks = await getTasks()
       // Filter incomplete tasks, sort by due date + priority
       const incomplete = allTasks.filter((t) => !t.isComplete)
-      const sorted = incomplete.sort((a, b) => {
-        // Nulls last
-        if (!a.dueDate && !b.dueDate) return 0
-        if (!a.dueDate) return 1
-        if (!b.dueDate) return -1
-        const dateCompare = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-        if (dateCompare !== 0) return dateCompare
-        // Then by priority (high > medium > low)
-        const priorityOrder = { high: 3, medium: 2, low: 1 }
-        return priorityOrder[b.priority] - priorityOrder[a.priority]
-      })
+      const sorted = sortTasks(incomplete, 'dueDate')
       setTasks(sorted.slice(0, 5))
     } catch (err) {
       setError('Failed to load tasks')

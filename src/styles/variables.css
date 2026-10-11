@@ -31,6 +31,23 @@
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  /* Surfaces & Borders (shared across zones) */
+  --color-surface:        #ffffff;
+  --color-border:         #d9d0c7;
+  --color-text-secondary: #666666;
+
+  /* Status colors (shared across zones) */
+  --color-error:    #c0392b;
+  --color-error-bg: #fdecea;
+
+  /* Priority colors (shared across zones) */
+  --color-priority-low:      #2e7d32;
+  --color-priority-low-bg:   #e8f5e9;
+  --color-priority-medium:   #b26a00;
+  --color-priority-medium-bg: #fff3e0;
+  --color-priority-high:     #c0392b;
+  --color-priority-high-bg:  #fdecea;
 }
 
 /* ============================================ */

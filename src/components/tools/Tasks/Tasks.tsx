@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
-import { getTasks, createTask, updateTask, deleteTask, completeTask, uncompleteTask } from '../../../services/tasksService'
+import { getTasks, createTask, updateTask, deleteTask, completeTask, uncompleteTask, sortTasks, getDueDateStatus, type SortOption } from '../../../services/tasksService'
 import { type Task } from '../../../types'
 import { formatUserDate } from '../../../utils/dateFormatter'
 import styles from './Tasks.module.css'
-
-type SortOption = 'dueDate' | 'priority'
 
 export function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [sortBy, setSortBy] = useState<SortOption>('dueDate')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
@@ -53,40 +52,22 @@ export function Tasks() {
     }
   }, [])
 
+  async function handleRefresh() {
+    try {
+      setIsRefreshing(true)
+      setError(null)
+      const data = await getTasks()
+      setTasks(data)
+    } catch (err) {
+      setError('Failed to refresh tasks')
+      console.error(err)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
   function getSortedTasks(tasksToSort: Task[]): Task[] {
-    const sorted = [...tasksToSort]
-
-    if (sortBy === 'dueDate') {
-      return sorted.sort((a, b) => {
-        // Incomplete first
-        if (a.isComplete !== b.isComplete) {
-          return a.isComplete ? 1 : -1
-        }
-        // Then by due date (nulls last)
-        if (!a.dueDate && !b.dueDate) return 0
-        if (!a.dueDate) return 1
-        if (!b.dueDate) return -1
-        const dateCompare = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-        if (dateCompare !== 0) return dateCompare
-        // Then by priority (high > medium > low)
-        const priorityOrder = { high: 3, medium: 2, low: 1 }
-        return priorityOrder[b.priority] - priorityOrder[a.priority]
-      })
-    }
-
-    if (sortBy === 'priority') {
-      return sorted.sort((a, b) => {
-        // Incomplete first
-        if (a.isComplete !== b.isComplete) {
-          return a.isComplete ? 1 : -1
-        }
-        // Then by priority (high > medium > low)
-        const priorityOrder = { high: 3, medium: 2, low: 1 }
-        return priorityOrder[b.priority] - priorityOrder[a.priority]
-      })
-    }
-
-    return sorted
+    return sortTasks(tasksToSort, sortBy)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -183,12 +164,22 @@ export function Tasks() {
       {/* Header */}
       <div className={styles.tasksHeader}>
         <h1>To Do List</h1>
-        <button
-          className="btn btn-primary"
-          onClick={() => setIsFormOpen(!isFormOpen)}
-        >
-          {isFormOpen ? '✕ Cancel' : '+ New Task'}
-        </button>
+        <div className={styles.headerButtons}>
+          <button
+            className="btn btn-secondary"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            aria-label="Refresh tasks"
+          >
+            {isRefreshing ? 'Refreshing...' : '⟳ Refresh'}
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsFormOpen(!isFormOpen)}
+          >
+            {isFormOpen ? '✕ Cancel' : '+ New Task'}
+          </button>
+        </div>
       </div>
 
       {/* Collapsible Form */}
@@ -246,10 +237,10 @@ export function Tasks() {
           </div>
 
           <div className={styles.formActions}>
-            <button type="submit" className="btn btn-save">
+            <button type="submit" className="btn btn-primary">
               {editingId ? 'Update' : 'Add'} Task
             </button>
-            <button type="button" className="btn btn-cancel" onClick={handleCancel}>
+            <button type="button" className="btn btn-secondary" onClick={handleCancel}>
               Cancel
             </button>
           </div>
@@ -284,8 +275,13 @@ export function Tasks() {
         </div>
       ) : (
         <div className={styles.tasksList}>
-          {sortedTasks.map((task) => (
-            <div key={task.id} className={`${styles.taskItem} ${task.isComplete ? styles.complete : ''}`}>
+          {sortedTasks.map((task) => {
+            const dueDateStatus = getDueDateStatus(task)
+            return (
+            <div
+              key={task.id}
+              className={`${styles.taskItem} ${task.isComplete ? styles.complete : ''}`}
+            >
               <div className={styles.taskCheckbox}>
                 <input
                   type="checkbox"
@@ -303,7 +299,7 @@ export function Tasks() {
                       {task.priority}
                     </span>
                     {task.dueDate && (
-                      <span className={styles.dueDate}>
+                      <span className={`${styles.dueDate} ${dueDateStatus === 'overdue' ? styles.overdue : ''} ${dueDateStatus === 'dueSoon' ? styles.dueSoon : ''}`}>
                         {formatUserDate(task.dueDate)}
                       </span>
                     )}
@@ -317,14 +313,14 @@ export function Tasks() {
 
               <div className={styles.taskActions}>
                 <button
-                  className="btn btn-sm btn-edit"
+                  className="btn btn-secondary"
                   onClick={() => handleEdit(task)}
                   aria-label={`Edit ${task.title}`}
                 >
                   Edit
                 </button>
                 <button
-                  className="btn btn-sm btn-danger"
+                  className="btn btn-danger"
                   onClick={() => handleDelete(task.id)}
                   disabled={!task.isComplete}
                   aria-label={`Delete ${task.title}`}
@@ -334,7 +330,8 @@ export function Tasks() {
                 </button>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

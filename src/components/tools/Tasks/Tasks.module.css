@@ -18,11 +18,16 @@
   font-size: var(--font-size-2xl);
 }
 
+.headerButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
 /* Collapsible Form */
 .tasksForm {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
   margin-bottom: 2rem;
   animation: slideDown 0.2s ease-out;
@@ -57,7 +62,7 @@
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   font-family: inherit;
 }
@@ -82,7 +87,7 @@
   background: var(--color-error-bg);
   color: var(--color-error);
   padding: 0.75rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   margin-bottom: 1rem;
   font-size: var(--font-size-sm);
 }
@@ -111,7 +116,7 @@
 .sortControls select {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
 }
 
@@ -133,7 +138,7 @@
   padding: 1rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   align-items: flex-start;
   transition: all 0.2s ease;
 }
@@ -173,9 +178,10 @@
 
 .taskHeader {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
   margin-bottom: 0.5rem;
 }
 
@@ -184,6 +190,8 @@
   font-size: var(--font-size-base);
   font-weight: 600;
   word-break: break-word;
+  flex: 1 1 200px;
+  min-width: 200px;
 }
 
 .taskMeta {
@@ -219,10 +227,22 @@
 
 .dueDate {
   padding: 0.25rem 0.75rem;
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius);
+  background: var(--color-neutral);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
   white-space: nowrap;
+}
+
+.dueDate.overdue {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.dueDate.dueSoon {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium);
+  font-weight: 600;
 }
 
 .taskDescription {
@@ -238,12 +258,6 @@
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
-}
-
-.btnSm {
-  padding: 0.5rem 1rem;
-  font-size: var(--font-size-xs);
-  white-space: nowrap;
 }
 
 /* Disabled button state */
@@ -289,7 +303,13 @@
     font-size: var(--font-size-xl);
   }
 
-  .tasksHeader button {
+  .headerButtons {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .headerButtons button {
     width: 100%;
   }
 
@@ -307,6 +327,12 @@
     align-items: flex-start;
   }
 
+  .taskTitle {
+    flex: none;
+    min-width: 0;
+    width: 100%;
+  }
+
   .taskMeta {
     width: 100%;
     justify-content: flex-start;
@@ -316,7 +342,7 @@
     width: 100%;
   }
 
-  .taskActions :global(.btn-sm) {
+  .taskActions .btn {
     flex: 1;
   }
 

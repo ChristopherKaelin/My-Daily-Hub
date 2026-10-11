@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabaseClient'
 import { isAuthenticated, getCurrentUserId } from './authService'
 import { type Task, DEMO_STORAGE_KEYS } from '../types'
+import { addDaysToDateString, getTodayString } from '../utils/dateFormatter'
 
 // --- Demo Mode ---
 
@@ -180,4 +181,54 @@ export async function completeTask(taskId: string): Promise<Task | null> {
 
 export async function uncompleteTask(taskId: string): Promise<Task | null> {
   return updateTask(taskId, { isComplete: false })
+}
+
+// --- Sorting ---
+
+export type SortOption = 'dueDate' | 'priority'
+
+export function sortTasks(tasks: Task[], sortBy: SortOption): Task[] {
+  const sorted = [...tasks]
+  const priorityOrder = { high: 3, medium: 2, low: 1 }
+
+  return sorted.sort((a, b) => {
+    // Incomplete first
+    if (a.isComplete !== b.isComplete) {
+      return a.isComplete ? 1 : -1
+    }
+
+    if (sortBy === 'dueDate') {
+      // Then by due date (nulls last)
+      if (!a.dueDate && !b.dueDate) return 0
+      if (!a.dueDate) return 1
+      if (!b.dueDate) return -1
+      const dateCompare = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+      if (dateCompare !== 0) return dateCompare
+    }
+
+    // Then by priority (high > medium > low)
+    return priorityOrder[b.priority] - priorityOrder[a.priority]
+  })
+}
+
+// --- Due Date Status ---
+
+export type DueDateStatus = 'overdue' | 'dueSoon' | null
+
+/**
+ * Overdue = due date is before today.
+ * Due soon = due date is today, tomorrow, or the day after.
+ * Completed tasks never get a status (already visually resolved).
+ * Compares YYYY-MM-DD strings directly — no time-of-day involved.
+ */
+export function getDueDateStatus(task: Task): DueDateStatus {
+  if (task.isComplete || !task.dueDate) return null
+
+  const today = getTodayString()
+  if (task.dueDate < today) return 'overdue'
+
+  const dueSoonCutoff = addDaysToDateString(today, 2)
+  if (task.dueDate <= dueSoonCutoff) return 'dueSoon'
+
+  return null
 }
