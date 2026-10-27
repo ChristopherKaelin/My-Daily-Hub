@@ -1,0 +1,253 @@
+.habitsPage {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Header */
+.habitsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.habitsHeader h1 {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+}
+
+.headerButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Collapsible Form */
+.habitsForm {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.habitsForm .formGroup {
+  margin-bottom: 1rem;
+}
+
+.habitsForm label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: var(--font-size-sm);
+}
+
+.habitsForm input[type="text"],
+.habitsForm input[type="number"],
+.habitsForm select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+}
+
+.habitsForm select:disabled {
+  background: var(--color-neutral);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.formError {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  font-size: var(--font-size-sm);
+}
+
+.fieldHint {
+  margin: 0.5rem 0 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Habit List */
+.habitsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.habitItem {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  align-items: flex-start;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.habitItem:hover {
+  border-color: var(--color-link);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.habitItem.archived {
+  opacity: 0.6;
+}
+
+/* Habit Content */
+.habitContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.habitName {
+  margin: 0 0 0.5rem 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.habitItem.archived .habitName {
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+}
+
+.habitMeta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.trackingModeBadge {
+  padding: 0.25rem 0.75rem;
+  margin-right: 1rem;
+  border-radius: 999px;
+  background: var(--color-neutral);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.incrementInfo {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Habit Actions */
+.habitActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.editLockedHint {
+  padding: 0.5rem 0.75rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  cursor: default;
+}
+
+/* Archived Section */
+.archivedSection {
+  margin-top: 2rem;
+}
+
+.archivedHeading {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Loading & Empty State */
+.loading,
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-secondary);
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: var(--font-size-base);
+}
+
+/* Mobile */
+@media (max-width: 675px) {
+  .habitsPage {
+    padding: 1rem;
+  }
+
+  .habitsHeader {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1.5rem;
+  }
+
+  .habitsHeader h1 {
+    font-size: var(--font-size-xl);
+  }
+
+  .headerButtons {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .headerButtons button {
+    width: 100%;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .habitItem {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .habitActions {
+    width: 100%;
+  }
+
+  .habitActions .btn {
+    flex: 1;
+  }
+}

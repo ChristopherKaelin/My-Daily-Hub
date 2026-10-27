@@ -2,20 +2,21 @@ import loginIcon from '../../assets/login.png'
 import logoutIcon from '../../assets/logout.png'
 import homeIcon from '../../assets/home.png'
 import tasksIcon from '../../assets/task-tracker.png'
-import goalsIcon from '../../assets/habit-definitions.png'
 import habitsIcon from '../../assets/habit-tracking.png'
+import goalsIcon from '../../assets/habit-definitions.png'
 import journalIcon from '../../assets/journal-entry-solid.png'
 import linksIcon from '../../assets/favorite-links.png'
 import quotesIcon from '../../assets/favorite-quotes-1.png'
 import bibleIcon from '../../assets/bible-verse.png'
 import weatherIcon from '../../assets/weather.png'
 import settingsIcon from '../../assets/user-settings.png'
+import refreshIcon from '../../assets/refresh.png'
 
 type Tool =
   | 'home'
   | 'tasks'
-  | 'goals'
   | 'habits'
+  | 'goals'
   | 'journal'
   | 'links'
   | 'quotes'
@@ -28,13 +29,14 @@ interface SidebarProps {
   onToolSelect: (tool: Tool) => void
   appMode: 'authed' | 'demo'
   onAuthAction: () => void
+  onResetDemo?: () => void
 }
 
 const navItems: { tool: Tool; label: string; icon: string }[] = [
   { tool: 'home',     label: 'Home',     icon: homeIcon },
   { tool: 'tasks',    label: 'Tasks',    icon: tasksIcon },
-  { tool: 'goals',    label: 'Goals',    icon: goalsIcon },
   { tool: 'habits',   label: 'Habits',   icon: habitsIcon },
+  { tool: 'goals',    label: 'Goals',    icon: goalsIcon },
   { tool: 'journal',  label: 'Journal',  icon: journalIcon },
   { tool: 'links',    label: 'Links',    icon: linksIcon },
   { tool: 'quotes',   label: 'Quotes',   icon: quotesIcon },
@@ -43,7 +45,7 @@ const navItems: { tool: Tool; label: string; icon: string }[] = [
   { tool: 'settings', label: 'Settings', icon: settingsIcon },
 ]
 
-function Sidebar({ activeTool, onToolSelect, appMode, onAuthAction }: SidebarProps) {
+function Sidebar({ activeTool, onToolSelect, appMode, onAuthAction, onResetDemo }: SidebarProps) {
   return (
     <nav className="sidebar">
       {navItems.map(({ tool, label, icon }) => (
@@ -59,6 +61,17 @@ function Sidebar({ activeTool, onToolSelect, appMode, onAuthAction }: SidebarPro
       ))}
 
       <div className="sidebar-divider" />
+
+      {appMode === 'demo' && onResetDemo && (
+        <button
+          className="sidebar-item"
+          onClick={onResetDemo}
+          title="Reset Demo Data"
+        >
+          <img src={refreshIcon} alt='Reset Demo Data' className="sidebar-icon" />
+          <span className="sidebar-label">Reset Demo Data</span>
+        </button>
+      )}
 
       <button
         className="sidebar-item"

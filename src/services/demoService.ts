@@ -100,13 +100,122 @@ export function initializeDemoData(): void {
 
   localStorage.setItem(DEMO_STORAGE_KEYS.TASKS, JSON.stringify(sampleTasks))
 
+  // Sample habits, goals, and progress
+  const readHabitId = crypto.randomUUID()
+  const walkHabitId = crypto.randomUUID()
+  const ztmHabitId = crypto.randomUUID()
+
+  const sampleHabits = [
+    {
+      id: readHabitId,
+      userId: 'demo',
+      name: 'Read 15 minutes',
+      trackingMode: 'boolean',
+      unit: null,
+      incrementAmount: null,
+      archivedAt: null,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: walkHabitId,
+      userId: 'demo',
+      name: 'Walk 1/2 mile',
+      trackingMode: 'cumulative',
+      unit: 'miles',
+      incrementAmount: 0.5,
+      archivedAt: null,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: ztmHabitId,
+      userId: 'demo',
+      name: 'Study ZTM course',
+      trackingMode: 'frequency',
+      unit: null,
+      incrementAmount: null,
+      archivedAt: null,
+      createdAt: new Date().toISOString(),
+    },
+  ]
+
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+  const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+  const startOfWeek = new Date(today)
+  startOfWeek.setDate(today.getDate() - ((today.getDay() + 6) % 7)) // Monday
+
+  const readGoalId = crypto.randomUUID()
+  const walkGoalId = crypto.randomUUID()
+  const ztmGoalId = crypto.randomUUID()
+
+  const sampleGoals = [
+    {
+      id: readGoalId,
+      habitId: readHabitId,
+      period: 'day',
+      targetCount: 1,
+      startDate: startOfMonth.toISOString().split('T')[0],
+      endDate: null,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: walkGoalId,
+      habitId: walkHabitId,
+      period: 'month',
+      targetCount: 60, // 30 miles at 0.5 miles per increment
+      startDate: startOfMonth.toISOString().split('T')[0],
+      endDate: endOfMonth.toISOString().split('T')[0],
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: ztmGoalId,
+      habitId: ztmHabitId,
+      period: 'week',
+      targetCount: 3,
+      startDate: startOfWeek.toISOString().split('T')[0],
+      endDate: null,
+      createdAt: new Date().toISOString(),
+    },
+  ]
+
+  const sampleProgressEntries = [
+    {
+      id: crypto.randomUUID(),
+      goalId: readGoalId,
+      entryDate: today.toISOString().split('T')[0],
+      count: 1,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      goalId: walkGoalId,
+      entryDate: new Date(today.getFullYear(), today.getMonth(), Math.max(1, today.getDate() - 2)).toISOString().split('T')[0],
+      count: 2,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      goalId: walkGoalId,
+      entryDate: new Date(today.getFullYear(), today.getMonth(), Math.max(1, today.getDate() - 1)).toISOString().split('T')[0],
+      count: 1,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      goalId: ztmGoalId,
+      entryDate: startOfWeek.toISOString().split('T')[0],
+      count: 1,
+      createdAt: new Date().toISOString(),
+    },
+  ]
+
+  localStorage.setItem(DEMO_STORAGE_KEYS.HABITS, JSON.stringify(sampleHabits))
+  localStorage.setItem(DEMO_STORAGE_KEYS.GOALS, JSON.stringify(sampleGoals))
+  localStorage.setItem(DEMO_STORAGE_KEYS.PROGRESS_ENTRIES, JSON.stringify(sampleProgressEntries))
+
   // Placeholder empty arrays for future phases
   localStorage.setItem(DEMO_STORAGE_KEYS.FAVORITE_LINKS, JSON.stringify([]))
   localStorage.setItem(DEMO_STORAGE_KEYS.FAVORITE_QUOTES, JSON.stringify([]))
   localStorage.setItem(DEMO_STORAGE_KEYS.KEY_DATES, JSON.stringify([]))
-  localStorage.setItem(DEMO_STORAGE_KEYS.GOAL_DEFINITIONS, JSON.stringify([]))
-  localStorage.setItem(DEMO_STORAGE_KEYS.MONTHLY_GOALS, JSON.stringify([]))
-  localStorage.setItem(DEMO_STORAGE_KEYS.PROGRESS_ENTRIES, JSON.stringify([]))
   localStorage.setItem(DEMO_STORAGE_KEYS.JOURNAL_ENTRIES, JSON.stringify([]))
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabaseClient'
-import { initializeDemoData } from './services/demoService'
+import { initializeDemoData, resetDemoData } from './services/demoService'
 import Header from './components/common/Header'
 import Sidebar, { type Tool } from './components/common/Sidebar'
 import AuthPage from './components/auth/AuthPage'
@@ -8,6 +8,8 @@ import UserSettings from './components/tools/UserSettings/UserSettings'
 import Weather from './components/tools/Weather/Weather'
 import BibleVerse from './components/tools/BibleVerse/BibleVerse'
 import { Tasks } from './components/tools/Tasks/Tasks'
+import { Habits } from './components/tools/Habits/Habits'
+import { Goals } from './components/tools/Goals/Goals'
 import Dashboard from './components/tools/Dashboard/Dashboard'
 
 type AppMode = 'loading' | 'authed' | 'demo'
@@ -44,12 +46,20 @@ function App() {
     setAppMode('demo')
   }
 
+  const handleResetDemo = () => {
+    if (!window.confirm('Reset demo data? This clears anything you\'ve added and restores the sample data.')) return
+    resetDemoData()
+    window.location.reload()
+  }
+
   const renderTool = () => {
     switch (activeTool) {
       case 'settings': return <UserSettings />
       case 'weather': return <Weather />
       case 'bible': return <BibleVerse />
       case 'tasks': return <Tasks />
+      case 'habits': return <Habits />
+      case 'goals': return <Goals />
       case 'home': return <Dashboard onNavigate={setActiveTool} />
       default: return <p>Coming soon...</p>
     }
@@ -74,6 +84,7 @@ function App() {
               setAppMode('loading')
             }
           }}
+          onResetDemo={appMode === 'demo' ? handleResetDemo : undefined}
         />
         <main className="app-main">
           <div className="container">
