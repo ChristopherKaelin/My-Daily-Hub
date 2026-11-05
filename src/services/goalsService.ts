@@ -27,6 +27,7 @@ async function loadAuthGoalsForHabit(habitId: string): Promise<Goal[]> {
   return data.map((row) => ({
     id: row.id,
     habitId: row.habit_id,
+    iconKey: row.icon_key,
     period: row.period,
     targetCount: row.target_count,
     startDate: row.start_date,
@@ -40,6 +41,7 @@ async function createAuthGoal(goal: Omit<Goal, 'id' | 'createdAt'>): Promise<Goa
     .from('goals')
     .insert({
       habit_id: goal.habitId,
+      icon_key: goal.iconKey,
       period: goal.period,
       target_count: goal.targetCount,
       start_date: goal.startDate,
@@ -53,6 +55,7 @@ async function createAuthGoal(goal: Omit<Goal, 'id' | 'createdAt'>): Promise<Goa
   return {
     id: data.id,
     habitId: data.habit_id,
+    iconKey: data.icon_key,
     period: data.period,
     targetCount: data.target_count,
     startDate: data.start_date,
@@ -65,6 +68,8 @@ async function updateAuthGoal(goalId: string, updates: Partial<Goal>): Promise<G
   const { data, error } = await supabase
     .from('goals')
     .update({
+      icon_key: updates.iconKey,
+      period: updates.period,
       target_count: updates.targetCount,
       start_date: updates.startDate,
       end_date: updates.endDate,
@@ -78,6 +83,7 @@ async function updateAuthGoal(goalId: string, updates: Partial<Goal>): Promise<G
   return {
     id: data.id,
     habitId: data.habit_id,
+    iconKey: data.icon_key,
     period: data.period,
     targetCount: data.target_count,
     startDate: data.start_date,
@@ -104,6 +110,7 @@ export async function createGoal(goal: Omit<Goal, 'id' | 'createdAt'>): Promise<
     const newGoal: Goal = {
       id: crypto.randomUUID(),
       habitId: goal.habitId,
+      iconKey: goal.iconKey,
       period: goal.period,
       targetCount: goal.targetCount,
       startDate: goal.startDate,
@@ -141,6 +148,35 @@ export async function updateGoal(goalId: string, updates: Partial<Goal>): Promis
 export async function endGoal(goalId: string, endDate?: string): Promise<Goal | null> {
   const resolvedEndDate = endDate ?? new Date().toISOString().slice(0, 10)
   return await updateGoal(goalId, { endDate: resolvedEndDate })
+}
+
+async function deleteAuthGoal(goalId: string): Promise<{ ok: boolean; blocked: boolean }> {
+  const { error } = await supabase.from('goals').delete().eq('id', goalId)
+
+  if (!error) return { ok: true, blocked: false }
+
+  // 23503 = foreign_key_violation — progress_entries still references this
+  // goal (progress_entries_goal_id_fkey is ON DELETE NO ACTION), so the DB
+  // is the backstop even if a stale UI check let the click through.
+  if (error.code === '23503') return { ok: false, blocked: true }
+
+  return { ok: false, blocked: false }
+}
+
+/**
+ * Deletes a goal outright. Only safe for a goal with no logged progress —
+ * callers should gate this on progressService.hasProgressEntries first, but
+ * the DB's FK constraint is the real backstop (deletion fails rather than
+ * orphaning progress rows).
+ */
+export async function deleteGoal(goalId: string): Promise<{ ok: boolean; blocked: boolean }> {
+  if (await isAuthenticated()) {
+    return await deleteAuthGoal(goalId)
+  } else {
+    const existing = loadDemoGoals()
+    saveDemoGoals(existing.filter((g) => g.id !== goalId))
+    return { ok: true, blocked: false }
+  }
 }
 
 // --- Filtering ---

@@ -48,6 +48,23 @@
   margin-bottom: 1rem;
 }
 
+.fieldHint {
+  margin: 0 0 1.5rem 0.75rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* A formRow directly followed by a fieldHint: tighten the row's own
+   bottom spacing so the hint sits close to its input; fieldHint's own
+   margin-bottom then carries the (larger) gap down to the next row. */
+.formRowWithHint {
+  margin-bottom: 0.25rem;
+}
+
+.formRowWithHint .formGroup {
+  margin-bottom: 0;
+}
+
 .goalsForm label {
   display: block;
   font-weight: 600;
@@ -102,8 +119,14 @@
 }
 
 .habitGroupTitle {
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.25rem 0;
   font-size: var(--font-size-lg);
+}
+
+.habitGroupSummary {
+  margin: 0 0 1rem 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
 }
 
 .noGoals {
@@ -130,6 +153,17 @@
   flex-wrap: wrap;
 }
 
+.goalActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.goalActions button {
+  min-width: 4.5rem;
+  text-align: center;
+}
+
 .goalItem.ended {
   opacity: 0.6;
 }
@@ -139,6 +173,11 @@
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.goalIcon {
+  color: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .periodBadge {

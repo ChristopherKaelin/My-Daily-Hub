@@ -40,6 +40,7 @@ export interface Habit {
 export interface Goal {
   id: string
   habitId: string
+  iconKey: string
   period: 'day' | 'week' | 'month'
   targetCount: number
   startDate: string

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { getHabits, createHabit, updateHabit, archiveHabit, unarchiveHabit, deleteHabit } from '../../../services/habitsService'
 import { getGoalsForHabit } from '../../../services/goalsService'
 import { type Habit } from '../../../types'
+import { formatIncrementDetail } from '../../../utils/habitFormatting'
 import styles from './Habits.module.css'
 
 type TrackingMode = 'boolean' | 'frequency' | 'cumulative'
@@ -388,7 +389,7 @@ function HabitItem({
       <div className={styles.habitContent}>
         <h3 className={styles.habitName}>
           {habit.trackingMode === 'cumulative'
-            ? `${habit.name}, in ${habit.incrementAmount} ${habit.unit} increments.`
+            ? `${habit.name}, in ${formatIncrementDetail(habit)} increments.`
             : habit.name}
         </h3>
       </div>

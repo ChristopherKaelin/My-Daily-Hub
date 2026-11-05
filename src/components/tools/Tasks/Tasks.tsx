@@ -11,6 +11,7 @@ export function Tasks() {
   const [loading, setLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [copiedTaskId, setCopiedTaskId] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -155,6 +156,20 @@ export function Tasks() {
     setEditingId(null)
     setIsFormOpen(false)
     setError(null)
+  }
+
+  async function handleCopy(task: Task) {
+    const text = task.description ? `${task.title}\n\n${task.description}` : task.title
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedTaskId(task.id)
+      setTimeout(() => {
+        setCopiedTaskId((current) => (current === task.id ? null : current))
+      }, 2000)
+    } catch (err) {
+      setError('Failed to copy task text')
+      console.error(err)
+    }
   }
 
   const sortedTasks = getSortedTasks(tasks)
@@ -312,21 +327,30 @@ export function Tasks() {
               </div>
 
               <div className={styles.taskActions}>
+                <div className={styles.taskActionsRow}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => handleEdit(task)}
+                    aria-label={`Edit ${task.title}`}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(task.id)}
+                    disabled={!task.isComplete}
+                    aria-label={`Delete ${task.title}`}
+                    title={!task.isComplete ? 'Only completed tasks can be deleted' : ''}
+                  >
+                    Delete
+                  </button>
+                </div>
                 <button
                   className="btn btn-secondary"
-                  onClick={() => handleEdit(task)}
-                  aria-label={`Edit ${task.title}`}
+                  onClick={() => handleCopy(task)}
+                  aria-label={`Copy ${task.title} text`}
                 >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(task.id)}
-                  disabled={!task.isComplete}
-                  aria-label={`Delete ${task.title}`}
-                  title={!task.isComplete ? 'Only completed tasks can be deleted' : ''}
-                >
-                  Delete
+                  {copiedTaskId === task.id ? '✓ Copied' : 'Copy'}
                 </button>
               </div>
             </div>

@@ -137,6 +137,24 @@ export async function getProgressForGoal(goalId: string): Promise<ProgressEntry[
   }
 }
 
+/**
+ * Whether a goal has any logged progress at all — used to gate editing and
+ * deleting a goal (both are only safe before anything's been logged against
+ * it). A count-only query, not a full fetch.
+ */
+export async function hasProgressEntries(goalId: string): Promise<boolean> {
+  if (await isAuthenticated()) {
+    const { count, error } = await supabase
+      .from('progress_entries')
+      .select('id', { count: 'exact', head: true })
+      .eq('goal_id', goalId)
+
+    return !error && (count ?? 0) > 0
+  } else {
+    return loadDemoProgress().some((e) => e.goalId === goalId)
+  }
+}
+
 export async function getProgressForDate(goalId: string, entryDate: string): Promise<ProgressEntry | null> {
   if (await isAuthenticated()) {
     return await getAuthEntry(goalId, entryDate)

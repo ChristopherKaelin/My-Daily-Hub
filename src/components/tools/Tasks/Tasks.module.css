@@ -256,8 +256,14 @@
 /* Task Actions */
 .taskActions {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
   flex-shrink: 0;
+}
+
+.taskActionsRow {
+  display: flex;
+  gap: 0.5rem;
 }
 
 /* Disabled button state */
@@ -342,7 +348,7 @@
     width: 100%;
   }
 
-  .taskActions .btn {
+  .taskActionsRow .btn {
     flex: 1;
   }
 
