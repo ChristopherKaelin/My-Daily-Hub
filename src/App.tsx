@@ -3,6 +3,7 @@ import { supabase } from './lib/supabaseClient'
 import { initializeDemoData, resetDemoData } from './services/demoService'
 import Header from './components/common/Header'
 import Sidebar, { type Tool } from './components/common/Sidebar'
+import ConfirmModal from './components/common/ConfirmModal'
 import AuthPage from './components/auth/AuthPage'
 import UserSettings from './components/tools/UserSettings/UserSettings'
 import Weather from './components/tools/Weather/Weather'
@@ -17,6 +18,7 @@ type AppMode = 'loading' | 'authed' | 'demo'
 function App() {
   const [appMode, setAppMode] = useState<AppMode>('loading')
   const [activeTool, setActiveTool] = useState<Tool>('home')
+  const [confirmResetDemo, setConfirmResetDemo] = useState(false)
 
   useEffect(() => {
     // Check initial session
@@ -47,7 +49,6 @@ function App() {
   }
 
   const handleResetDemo = () => {
-    if (!window.confirm('Reset demo data? This clears anything you\'ve added and restores the sample data.')) return
     resetDemoData()
     window.location.reload()
   }
@@ -71,7 +72,7 @@ function App() {
 
   return (
     <div className="app-wrapper zone-dashboard">
-      <Header />
+      <Header appMode={appMode as 'authed' | 'demo'} />
       <div className="app-body">
         <Sidebar
           activeTool={activeTool}
@@ -84,7 +85,7 @@ function App() {
               setAppMode('loading')
             }
           }}
-          onResetDemo={appMode === 'demo' ? handleResetDemo : undefined}
+          onResetDemo={appMode === 'demo' ? () => setConfirmResetDemo(true) : undefined}
         />
         <main className="app-main">
           <div className="container">
@@ -92,6 +93,20 @@ function App() {
           </div>
         </main>
       </div>
+
+      {confirmResetDemo && (
+        <ConfirmModal
+          title="Reset Demo Data"
+          message="Reset demo data? This clears anything you've added and restores the sample data."
+          confirmLabel="Reset"
+          danger
+          onConfirm={() => {
+            handleResetDemo()
+            setConfirmResetDemo(false)
+          }}
+          onCancel={() => setConfirmResetDemo(false)}
+        />
+      )}
     </div>
   )
 }

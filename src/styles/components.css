@@ -486,36 +486,3 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
-/* ============================================ */
-/* DASHBOARD                                    */
-/* ============================================ */
-
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-.dashboard-row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-.dashboard-row .bible-verse {
-  max-width: none;
-  margin: 0;
-  width: 100%;
-}
-
-@media (min-width: 900px) {
-  .dashboard-row {
-    flex-direction: row;
-    align-items: stretch;
-  }
-
-  .dashboard-row > * {
-    flex: 1;
-  }
-}

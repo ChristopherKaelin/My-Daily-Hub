@@ -3,6 +3,7 @@ import { getHabits, createHabit, updateHabit, archiveHabit, unarchiveHabit, dele
 import { getGoalsForHabit } from '../../../services/goalsService'
 import { type Habit } from '../../../types'
 import { formatIncrementDetail } from '../../../utils/habitFormatting'
+import ConfirmModal from '../../common/ConfirmModal'
 import styles from './Habits.module.css'
 
 type TrackingMode = 'boolean' | 'frequency' | 'cumulative'
@@ -14,6 +15,7 @@ export function Habits() {
   const [loading, setLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [confirmDeleteHabit, setConfirmDeleteHabit] = useState<Habit | null>(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -135,10 +137,6 @@ export function Habits() {
   }
 
   async function handleDelete(habit: Habit) {
-    if (!window.confirm(`Delete "${habit.name}"? This can't be undone.`)) {
-      return
-    }
-
     try {
       const ok = await deleteHabit(habit.id)
       if (ok) {
@@ -237,7 +235,7 @@ export function Habits() {
                   hasGoals={habitsWithGoals.has(habit.id)}
                   onEdit={handleEdit}
                   onToggleArchive={handleToggleArchive}
-                  onDelete={handleDelete}
+                  onDelete={setConfirmDeleteHabit}
                 />
               )
             )}
@@ -254,13 +252,27 @@ export function Habits() {
                     hasGoals={habitsWithGoals.has(habit.id)}
                     onEdit={handleEdit}
                     onToggleArchive={handleToggleArchive}
-                    onDelete={handleDelete}
+                    onDelete={setConfirmDeleteHabit}
                   />
                 ))}
               </div>
             </div>
           )}
         </>
+      )}
+
+      {confirmDeleteHabit && (
+        <ConfirmModal
+          title="Delete Habit"
+          message={`Delete "${confirmDeleteHabit.name}"? This can't be undone.`}
+          confirmLabel="Delete"
+          danger
+          onConfirm={() => {
+            handleDelete(confirmDeleteHabit)
+            setConfirmDeleteHabit(null)
+          }}
+          onCancel={() => setConfirmDeleteHabit(null)}
+        />
       )}
     </div>
   )

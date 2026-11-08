@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { getTasks, sortTasks } from '../../services/tasksService'
 import { type Task } from '../../types'
 import { type Tool } from '../common/Sidebar'
+import { formatUserDate } from '../../utils/dateFormatter'
 import styles from './Card.module.css'
 
 interface TasksCardProps {
@@ -76,7 +77,7 @@ export function TasksCard({ onNavigate }: TasksCardProps) {
               <p className={styles.taskTitle}>{task.title}</p>
               {task.dueDate && (
                 <p className={styles.taskDueDate}>
-                  {new Date(task.dueDate).toLocaleDateString()}
+                  {formatUserDate(task.dueDate)}
                 </p>
               )}
             </div>

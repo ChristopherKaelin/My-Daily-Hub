@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { getTasks, createTask, updateTask, deleteTask, completeTask, uncompleteTask, sortTasks, getDueDateStatus, type SortOption } from '../../../services/tasksService'
 import { type Task } from '../../../types'
 import { formatUserDate } from '../../../utils/dateFormatter'
+import ConfirmModal from '../../common/ConfirmModal'
 import styles from './Tasks.module.css'
 
 export function Tasks() {
@@ -12,6 +13,7 @@ export function Tasks() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copiedTaskId, setCopiedTaskId] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -115,8 +117,6 @@ export function Tasks() {
   }
 
   async function handleDelete(taskId: string) {
-    if (!window.confirm('Are you sure?')) return
-
     try {
       const success = await deleteTask(taskId)
       if (success) {
@@ -337,7 +337,7 @@ export function Tasks() {
                   </button>
                   <button
                     className="btn btn-danger"
-                    onClick={() => handleDelete(task.id)}
+                    onClick={() => setConfirmDeleteId(task.id)}
                     disabled={!task.isComplete}
                     aria-label={`Delete ${task.title}`}
                     title={!task.isComplete ? 'Only completed tasks can be deleted' : ''}
@@ -357,6 +357,20 @@ export function Tasks() {
             )
           })}
         </div>
+      )}
+
+      {confirmDeleteId && (
+        <ConfirmModal
+          title="Delete Task"
+          message="Are you sure?"
+          confirmLabel="Delete"
+          danger
+          onConfirm={() => {
+            handleDelete(confirmDeleteId)
+            setConfirmDeleteId(null)
+          }}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
       )}
     </div>
   )

@@ -6,6 +6,7 @@ import { type Habit, type Goal } from '../../../types'
 import { formatHabitSummary, formatHabitOptionLabel } from '../../../utils/habitFormatting'
 import { IconCombobox } from '../../common/IconCombobox'
 import { ICON_REGISTRY } from '../../../data/iconRegistry'
+import ConfirmModal from '../../common/ConfirmModal'
 import styles from './Goals.module.css'
 
 type Period = 'day' | 'week' | 'month'
@@ -41,6 +42,8 @@ export function Goals() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null)
   const [editableGoalIds, setEditableGoalIds] = useState<Set<string>>(new Set())
+  const [confirmEndGoal, setConfirmEndGoal] = useState<Goal | null>(null)
+  const [confirmDeleteGoal, setConfirmDeleteGoal] = useState<Goal | null>(null)
 
   const [formData, setFormData] = useState({
     habitId: '',
@@ -200,8 +203,6 @@ export function Goals() {
   }
 
   async function handleEndGoal(goal: Goal) {
-    if (!window.confirm('End this goal as of today?')) return
-
     try {
       const updated = await endGoal(goal.id)
       if (updated) {
@@ -238,13 +239,11 @@ export function Goals() {
   }
 
   async function handleDelete(goal: Goal) {
-    if (!window.confirm('Delete this goal? This can\'t be undone.')) return
-
     try {
       const result = await deleteGoal(goal.id)
 
       if (result.blocked) {
-        setError('This goal has logged progress and can\'t be deleted.')
+        setError("This goal has logged progress and can't be deleted.")
         return
       }
 
@@ -448,7 +447,7 @@ export function Goals() {
                                 </button>
                                 <button
                                   className="btn btn-danger"
-                                  onClick={() => handleDelete(goal)}
+                                  onClick={() => setConfirmDeleteGoal(goal)}
                                   aria-label={`Delete ${habit.name} ${goal.period} goal`}
                                 >
                                   Delete
@@ -458,7 +457,7 @@ export function Goals() {
                             {active && (
                               <button
                                 className="btn btn-danger"
-                                onClick={() => handleEndGoal(goal)}
+                                onClick={() => setConfirmEndGoal(goal)}
                                 aria-label={`End ${habit.name} ${goal.period} goal`}
                               >
                                 End
@@ -474,6 +473,34 @@ export function Goals() {
             )
           })}
         </div>
+      )}
+
+      {confirmEndGoal && (
+        <ConfirmModal
+          title="End Goal"
+          message="End this goal as of today?"
+          confirmLabel="End"
+          danger
+          onConfirm={() => {
+            handleEndGoal(confirmEndGoal)
+            setConfirmEndGoal(null)
+          }}
+          onCancel={() => setConfirmEndGoal(null)}
+        />
+      )}
+
+      {confirmDeleteGoal && (
+        <ConfirmModal
+          title="Delete Goal"
+          message="Delete this goal? This can't be undone."
+          confirmLabel="Delete"
+          danger
+          onConfirm={() => {
+            handleDelete(confirmDeleteGoal)
+            setConfirmDeleteGoal(null)
+          }}
+          onCancel={() => setConfirmDeleteGoal(null)}
+        />
       )}
     </div>
   )
