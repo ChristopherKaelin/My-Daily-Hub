@@ -11,6 +11,7 @@ import BibleVerse from './components/tools/BibleVerse/BibleVerse'
 import { Tasks } from './components/tools/Tasks/Tasks'
 import { Habits } from './components/tools/Habits/Habits'
 import { Goals } from './components/tools/Goals/Goals'
+import { Tracker } from './components/tools/Tracker/Tracker'
 import Dashboard from './components/tools/Dashboard/Dashboard'
 
 type AppMode = 'loading' | 'authed' | 'demo'
@@ -61,6 +62,7 @@ function App() {
       case 'tasks': return <Tasks />
       case 'habits': return <Habits />
       case 'goals': return <Goals />
+      case 'tracker': return <Tracker />
       case 'home': return <Dashboard onNavigate={setActiveTool} />
       default: return <p>Coming soon...</p>
     }

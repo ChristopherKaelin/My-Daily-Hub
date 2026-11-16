@@ -20,7 +20,7 @@ create table goals (
   id            uuid primary key default gen_random_uuid(),
   habit_id      uuid not null references habits(id),
   period        text not null check (period in ('day', 'week', 'month')),
-  target_count  integer not null check (target_count > 0),
+  target_value  integer not null check (target_value > 0),
   start_date    date not null,
   end_date      date,
   created_at    timestamptz not null default now(),

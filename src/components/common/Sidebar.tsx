@@ -4,6 +4,7 @@ import homeIcon from '../../assets/home.png'
 import tasksIcon from '../../assets/task-tracker.png'
 import habitsIcon from '../../assets/habit-tracking.png'
 import goalsIcon from '../../assets/habit-definitions.png'
+import trackerIcon from '../../assets/key-date.png'
 import journalIcon from '../../assets/journal-entry-solid.png'
 import linksIcon from '../../assets/favorite-links.png'
 import quotesIcon from '../../assets/favorite-quotes-1.png'
@@ -17,6 +18,7 @@ type Tool =
   | 'tasks'
   | 'habits'
   | 'goals'
+  | 'tracker'
   | 'journal'
   | 'links'
   | 'quotes'
@@ -37,6 +39,7 @@ const navItems: { tool: Tool; label: string; icon: string }[] = [
   { tool: 'tasks',    label: 'Tasks',    icon: tasksIcon },
   { tool: 'habits',   label: 'Habits',   icon: habitsIcon },
   { tool: 'goals',    label: 'Goals',    icon: goalsIcon },
+  { tool: 'tracker',  label: 'Tracker',  icon: trackerIcon },
   { tool: 'journal',  label: 'Journal',  icon: journalIcon },
   { tool: 'links',    label: 'Links',    icon: linksIcon },
   { tool: 'quotes',   label: 'Quotes',   icon: quotesIcon },

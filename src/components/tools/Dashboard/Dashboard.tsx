@@ -2,6 +2,7 @@
 import VerseOfTheDayCard from '../../../components/cards/VerseOfTheDayCard'
 import CurrentWeatherCard from '../../cards/CurrentWeatherCard'
 import { TasksCard } from '../../cards/TasksCard'
+import { TrackerCard } from '../../cards/TrackerCard'
 import { type Tool } from '../../common/Sidebar'
 import styles from './Dashboard.module.css'
 
@@ -19,6 +20,7 @@ function Dashboard({ onNavigate }: DashboardProps) {
       </div>
       <div className={styles.dashboardRow}>
         <TasksCard onNavigate={onNavigate} />
+        <TrackerCard onNavigate={onNavigate} />
       </div>
     </div>
   )

@@ -1,0 +1,403 @@
+.trackerPage {
+  padding: var(--spacing-lg);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Header */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-base);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pageHeader h2 {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--track-primary);
+}
+
+/* View Toggle */
+.viewToggle {
+  display: flex;
+  gap: 0.25rem;
+  background: #e8f4f8;
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--track-primary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggleBtn:hover {
+  background: rgba(19, 72, 96, 0.1);
+}
+
+.toggleActive {
+  background: var(--track-primary);
+  color: #fff;
+}
+
+/* Date Navigation */
+.dateNav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.dateBtn {
+  background: none;
+  border: 1px solid var(--track-primary);
+  border-radius: var(--radius-sm);
+  color: var(--track-primary);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dateBtn:hover:not(:disabled) {
+  background: var(--track-primary);
+  color: #fff;
+}
+
+.dateBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.dateLabel {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--track-primary);
+  min-width: 11ch;
+  text-align: center;
+}
+
+.todayBtn {
+  background: none;
+  border: 1px solid var(--track-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--track-secondary);
+  font-size: var(--font-size-sm);
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  margin-left: 0.25rem;
+}
+
+.todayBtn:hover {
+  background: var(--track-secondary);
+  color: #fff;
+}
+
+/* State messages */
+.stateMsg {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  padding: 2rem 0;
+  margin: 0;
+}
+
+.stateMsgError {
+  color: var(--color-error);
+}
+
+/* Goal Card (Log view) */
+.goalCard {
+  background: #fff;
+  border: 1px solid #d0e8f0;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-base) var(--spacing-lg);
+  margin-bottom: var(--spacing-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.goalCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.goalInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1 1 auto;
+}
+
+.goalIcon {
+  color: var(--track-primary);
+  flex-shrink: 0;
+}
+
+.habitName {
+  margin: 0 0 0.2rem 0;
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  color: var(--track-primary);
+  line-height: 1.2;
+}
+
+.goalMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.progressLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.measureLabel {
+  margin: 0.2rem 0 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.periodBadge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 2px 7px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.period_day {
+  background: #d4edf5;
+  color: #0a4a63;
+}
+
+.period_week {
+  background: #fde8d3;
+  color: #9a4420;
+}
+
+.period_month {
+  background: #d6f0e0;
+  color: #1b6b3a;
+}
+
+/* Log controls */
+.logControls {
+  flex-shrink: 0;
+}
+
+.btnMark {
+  background: none;
+  border: 2px solid var(--track-primary);
+  color: var(--track-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  min-width: 7rem;
+}
+
+.btnMark:hover:not(:disabled) {
+  background: var(--track-primary);
+  color: #fff;
+}
+
+.btnDone {
+  background: var(--track-primary);
+  color: #fff;
+}
+
+.btnDone:hover:not(:disabled) {
+  background: #0d3650;
+}
+
+.btnMark:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.countControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnCount {
+  background: none;
+  border: 2px solid var(--track-primary);
+  color: var(--track-primary);
+  border-radius: var(--radius-sm);
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btnCount:hover:not(:disabled) {
+  background: var(--track-primary);
+  color: #fff;
+}
+
+.btnCount:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.countValue {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--track-primary);
+  min-width: 2ch;
+  text-align: center;
+}
+
+/* Progress Bar */
+.progressSection {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.progressBarTrack {
+  flex: 1;
+  height: 10px;
+  background: #d0e6ef;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.progressPct {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--track-primary);
+  min-width: 3ch;
+  text-align: right;
+}
+
+/* Summary Card */
+.summaryCard {
+  background: #fff;
+  border: 1px solid #d0e8f0;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-base) var(--spacing-lg);
+  margin-bottom: var(--spacing-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.monthLabel {
+  margin: 0.5rem 0 0.75rem 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* Calendar Grid (Mon–Sun, 7 cols) */
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calDayHeader {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  padding-bottom: 4px;
+}
+
+.calDay {
+  font-size: 0.72rem;
+  text-align: center;
+  padding: 4px 2px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  transition: background 0.15s;
+  cursor: default;
+}
+
+.calDayDone {
+  background: var(--track-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.calDayToday {
+  outline: 2px solid var(--track-secondary);
+  outline-offset: -2px;
+}
+
+.calDayFuture {
+  opacity: 0.35;
+}
+
+/* Responsive */
+@media (max-width: 675px) {
+  .trackerPage {
+    padding: var(--spacing-base);
+  }
+
+  .pageHeader h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .goalCard,
+  .summaryCard {
+    padding: var(--spacing-base);
+  }
+
+  .goalCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logControls {
+    width: 100%;
+  }
+
+  .btnMark {
+    width: 100%;
+  }
+
+  .countControls {
+    justify-content: center;
+    width: 100%;
+  }
+}

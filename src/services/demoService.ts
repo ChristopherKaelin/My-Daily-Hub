@@ -151,8 +151,9 @@ export function initializeDemoData(): void {
     {
       id: readGoalId,
       habitId: readHabitId,
+      iconKey: 'books',
       period: 'day',
-      targetCount: 1,
+      targetValue: 1,
       startDate: startOfMonth.toISOString().split('T')[0],
       endDate: null,
       createdAt: new Date().toISOString(),
@@ -160,8 +161,9 @@ export function initializeDemoData(): void {
     {
       id: walkGoalId,
       habitId: walkHabitId,
+      iconKey: 'footprints',
       period: 'month',
-      targetCount: 60, // 30 miles at 0.5 miles per increment
+      targetValue: 30,
       startDate: startOfMonth.toISOString().split('T')[0],
       endDate: endOfMonth.toISOString().split('T')[0],
       createdAt: new Date().toISOString(),
@@ -169,8 +171,9 @@ export function initializeDemoData(): void {
     {
       id: ztmGoalId,
       habitId: ztmHabitId,
+      iconKey: 'graduation-cap',
       period: 'week',
-      targetCount: 3,
+      targetValue: 3,
       startDate: startOfWeek.toISOString().split('T')[0],
       endDate: null,
       createdAt: new Date().toISOString(),

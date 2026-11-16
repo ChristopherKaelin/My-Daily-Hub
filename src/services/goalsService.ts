@@ -1,16 +1,16 @@
-import { supabase } from '../lib/supabaseClient'
-import { isAuthenticated } from './authService'
-import { type Goal, DEMO_STORAGE_KEYS } from '../types'
+import { supabase } from '../lib/supabaseClient';
+import { isAuthenticated } from './authService';
+import { type Goal, DEMO_STORAGE_KEYS } from '../types';
 
 // --- Demo Mode ---
 
 function loadDemoGoals(): Goal[] {
-  const raw = localStorage.getItem(DEMO_STORAGE_KEYS.GOALS)
-  return raw ? JSON.parse(raw) : []
+  const raw = localStorage.getItem(DEMO_STORAGE_KEYS.GOALS);
+  return raw ? JSON.parse(raw) : [];
 }
 
 function saveDemoGoals(goals: Goal[]): void {
-  localStorage.setItem(DEMO_STORAGE_KEYS.GOALS, JSON.stringify(goals))
+  localStorage.setItem(DEMO_STORAGE_KEYS.GOALS, JSON.stringify(goals));
 }
 
 // --- Supabase ---
@@ -20,20 +20,20 @@ async function loadAuthGoalsForHabit(habitId: string): Promise<Goal[]> {
     .from('goals')
     .select('*')
     .eq('habit_id', habitId)
-    .order('start_date', { ascending: false })
+    .order('start_date', { ascending: false });
 
-  if (error || !data) return []
+  if (error || !data) return [];
 
   return data.map((row) => ({
     id: row.id,
     habitId: row.habit_id,
     iconKey: row.icon_key,
     period: row.period,
-    targetCount: row.target_count,
+    targetValue: row.target_value,
     startDate: row.start_date,
     endDate: row.end_date,
     createdAt: row.created_at,
-  }))
+  }));
 }
 
 async function createAuthGoal(goal: Omit<Goal, 'id' | 'createdAt'>): Promise<Goal | null> {
@@ -43,25 +43,25 @@ async function createAuthGoal(goal: Omit<Goal, 'id' | 'createdAt'>): Promise<Goa
       habit_id: goal.habitId,
       icon_key: goal.iconKey,
       period: goal.period,
-      target_count: goal.targetCount,
+      target_value: goal.targetValue,
       start_date: goal.startDate,
       end_date: goal.endDate,
     })
     .select()
-    .single()
+    .single();
 
-  if (error || !data) return null
+  if (error || !data) return null;
 
   return {
     id: data.id,
     habitId: data.habit_id,
     iconKey: data.icon_key,
     period: data.period,
-    targetCount: data.target_count,
+    targetValue: data.target_value,
     startDate: data.start_date,
     endDate: data.end_date,
     createdAt: data.created_at,
-  }
+  };
 }
 
 async function updateAuthGoal(goalId: string, updates: Partial<Goal>): Promise<Goal | null> {
@@ -70,73 +70,92 @@ async function updateAuthGoal(goalId: string, updates: Partial<Goal>): Promise<G
     .update({
       icon_key: updates.iconKey,
       period: updates.period,
-      target_count: updates.targetCount,
+      target_value: updates.targetValue,
       start_date: updates.startDate,
       end_date: updates.endDate,
     })
     .eq('id', goalId)
     .select()
-    .single()
+    .single();
 
-  if (error || !data) return null
+  if (error || !data) return null;
 
   return {
     id: data.id,
     habitId: data.habit_id,
     iconKey: data.icon_key,
     period: data.period,
-    targetCount: data.target_count,
+    targetValue: data.target_value,
     startDate: data.start_date,
     endDate: data.end_date,
     createdAt: data.created_at,
-  }
+  };
 }
 
 // --- Public API ---
 
+export async function getAllGoals(): Promise<Goal[]> {
+  if (await isAuthenticated()) {
+    const { data, error } = await supabase.from('goals').select('*').order('start_date', { ascending: false });
+    if (error || !data) return [];
+    return data.map((row) => ({
+      id: row.id,
+      habitId: row.habit_id,
+      iconKey: row.icon_key,
+      period: row.period,
+      targetValue: row.target_value,
+      startDate: row.start_date,
+      endDate: row.end_date,
+      createdAt: row.created_at,
+    }));
+  } else {
+    return loadDemoGoals();
+  }
+}
+
 export async function getGoalsForHabit(habitId: string): Promise<Goal[]> {
   if (await isAuthenticated()) {
-    return await loadAuthGoalsForHabit(habitId)
+    return await loadAuthGoalsForHabit(habitId);
   } else {
-    return loadDemoGoals().filter((g) => g.habitId === habitId)
+    return loadDemoGoals().filter((g) => g.habitId === habitId);
   }
 }
 
 export async function createGoal(goal: Omit<Goal, 'id' | 'createdAt'>): Promise<Goal | null> {
   if (await isAuthenticated()) {
-    return await createAuthGoal(goal)
+    return await createAuthGoal(goal);
   } else {
-    const existing = loadDemoGoals()
+    const existing = loadDemoGoals();
     const newGoal: Goal = {
       id: crypto.randomUUID(),
       habitId: goal.habitId,
       iconKey: goal.iconKey,
       period: goal.period,
-      targetCount: goal.targetCount,
+      targetValue: goal.targetValue,
       startDate: goal.startDate,
       endDate: goal.endDate,
       createdAt: new Date().toISOString(),
-    }
-    saveDemoGoals([...existing, newGoal])
-    return newGoal
+    };
+    saveDemoGoals([...existing, newGoal]);
+    return newGoal;
   }
 }
 
 export async function updateGoal(goalId: string, updates: Partial<Goal>): Promise<Goal | null> {
   if (await isAuthenticated()) {
-    return await updateAuthGoal(goalId, updates)
+    return await updateAuthGoal(goalId, updates);
   } else {
-    const existing = loadDemoGoals()
-    const index = existing.findIndex((g) => g.id === goalId)
-    if (index === -1) return null
+    const existing = loadDemoGoals();
+    const index = existing.findIndex((g) => g.id === goalId);
+    if (index === -1) return null;
 
     const updated: Goal = {
       ...existing[index],
       ...updates,
-    }
-    existing[index] = updated
-    saveDemoGoals(existing)
-    return updated
+    };
+    existing[index] = updated;
+    saveDemoGoals(existing);
+    return updated;
   }
 }
 
@@ -146,21 +165,21 @@ export async function updateGoal(goalId: string, updates: Partial<Goal>): Promis
  * by their own start/end dates instead.
  */
 export async function endGoal(goalId: string, endDate?: string): Promise<Goal | null> {
-  const resolvedEndDate = endDate ?? new Date().toISOString().slice(0, 10)
-  return await updateGoal(goalId, { endDate: resolvedEndDate })
+  const resolvedEndDate = endDate ?? new Date().toISOString().slice(0, 10);
+  return await updateGoal(goalId, { endDate: resolvedEndDate });
 }
 
 async function deleteAuthGoal(goalId: string): Promise<{ ok: boolean; blocked: boolean }> {
-  const { error } = await supabase.from('goals').delete().eq('id', goalId)
+  const { error } = await supabase.from('goals').delete().eq('id', goalId);
 
-  if (!error) return { ok: true, blocked: false }
+  if (!error) return { ok: true, blocked: false };
 
   // 23503 = foreign_key_violation — progress_entries still references this
   // goal (progress_entries_goal_id_fkey is ON DELETE NO ACTION), so the DB
   // is the backstop even if a stale UI check let the click through.
-  if (error.code === '23503') return { ok: false, blocked: true }
+  if (error.code === '23503') return { ok: false, blocked: true };
 
-  return { ok: false, blocked: false }
+  return { ok: false, blocked: false };
 }
 
 /**
@@ -171,11 +190,11 @@ async function deleteAuthGoal(goalId: string): Promise<{ ok: boolean; blocked: b
  */
 export async function deleteGoal(goalId: string): Promise<{ ok: boolean; blocked: boolean }> {
   if (await isAuthenticated()) {
-    return await deleteAuthGoal(goalId)
+    return await deleteAuthGoal(goalId);
   } else {
-    const existing = loadDemoGoals()
-    saveDemoGoals(existing.filter((g) => g.id !== goalId))
-    return { ok: true, blocked: false }
+    const existing = loadDemoGoals();
+    saveDemoGoals(existing.filter((g) => g.id !== goalId));
+    return { ok: true, blocked: false };
   }
 }
 
@@ -187,6 +206,6 @@ export async function deleteGoal(goalId: string): Promise<{ ok: boolean; blocked
  * after it.
  */
 export function getActiveGoals(goals: Goal[], onDate?: string): Goal[] {
-  const date = onDate ?? new Date().toISOString().slice(0, 10)
-  return goals.filter((g) => g.startDate <= date && (!g.endDate || g.endDate >= date))
+  const date = onDate ?? new Date().toISOString().slice(0, 10);
+  return goals.filter((g) => g.startDate <= date && (!g.endDate || g.endDate >= date));
 }

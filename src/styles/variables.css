@@ -71,6 +71,9 @@
   --color-neutral:    #EAF6EE;
   --color-link:       #0D7C92;
   --color-link-hover: #0A5A6A;
+  --track-primary:    var(--color-primary);
+  --track-secondary:  var(--color-secondary);
+  --track-accent:     var(--color-accent);
 }
 
 /* ============================================ */

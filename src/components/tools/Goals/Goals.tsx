@@ -49,7 +49,7 @@ export function Goals() {
     habitId: '',
     iconKey: '',
     period: 'day' as Period,
-    targetCount: '',
+    targetValue: '',
     startDate: new Date().toISOString().split('T')[0],
     endDate: '',
   })
@@ -132,7 +132,7 @@ export function Goals() {
       return
     }
 
-    if (!formData.targetCount || Number(formData.targetCount) <= 0) {
+    if (!formData.targetValue || Number(formData.targetValue) <= 0) {
       setError('Target must be greater than 0')
       return
     }
@@ -145,7 +145,9 @@ export function Goals() {
     }
 
     const existingGoals = goalsByHabit[formData.habitId] || []
-    const conflict = existingGoals.find((g) => rangesOverlap(formData.startDate, endDate, g.startDate, g.endDate))
+    const conflict = existingGoals.find(
+      (g) => g.id !== editingGoalId && rangesOverlap(formData.startDate, endDate, g.startDate, g.endDate)
+    )
     if (conflict) {
       setError(
         `This habit already has a ${conflict.period} goal covering that range ` +
@@ -158,11 +160,13 @@ export function Goals() {
     try {
       setError(null)
 
+      const targetValue = Number(formData.targetValue)
+
       if (editingGoalId) {
         const updated = await updateGoal(editingGoalId, {
           iconKey: formData.iconKey,
           period: formData.period,
-          targetCount: Number(formData.targetCount),
+          targetValue,
           startDate: formData.startDate,
           endDate,
         })
@@ -180,7 +184,7 @@ export function Goals() {
           habitId: formData.habitId,
           iconKey: formData.iconKey,
           period: formData.period,
-          targetCount: Number(formData.targetCount),
+          targetValue,
           startDate: formData.startDate,
           endDate,
         })
@@ -193,7 +197,7 @@ export function Goals() {
         }
       }
 
-      setFormData({ habitId: '', iconKey: '', period: 'day', targetCount: '', startDate: today, endDate: '' })
+      setFormData({ habitId: '', iconKey: '', period: 'day', targetValue: '', startDate: today, endDate: '' })
       setIsFormOpen(false)
       setEditingGoalId(null)
     } catch (err) {
@@ -218,7 +222,7 @@ export function Goals() {
   }
 
   function handleCancel() {
-    setFormData({ habitId: '', iconKey: '', period: 'day', targetCount: '', startDate: today, endDate: '' })
+    setFormData({ habitId: '', iconKey: '', period: 'day', targetValue: '', startDate: today, endDate: '' })
     setIsFormOpen(false)
     setEditingGoalId(null)
     setError(null)
@@ -229,7 +233,7 @@ export function Goals() {
       habitId: goal.habitId,
       iconKey: goal.iconKey,
       period: goal.period,
-      targetCount: String(goal.targetCount),
+      targetValue: String(goal.targetValue),
       startDate: goal.startDate,
       endDate: goal.endDate ?? '',
     })
@@ -348,14 +352,17 @@ export function Goals() {
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="targetCount">Target *</label>
+              <label htmlFor="targetValue">
+                Target{selectedHabit?.trackingMode === 'cumulative' && selectedHabit.unit ? ` (${selectedHabit.unit})` : ''} *
+              </label>
               <input
-                id="targetCount"
+                id="targetValue"
                 type="number"
-                min="1"
-                placeholder="e.g. 3"
-                value={formData.targetCount}
-                onChange={(e) => setFormData({ ...formData, targetCount: e.target.value })}
+                min="0"
+                step="any"
+                placeholder={selectedHabit?.trackingMode === 'cumulative' && selectedHabit.unit ? `e.g. 10 ${selectedHabit.unit}` : 'e.g. 3'}
+                value={formData.targetValue}
+                onChange={(e) => setFormData({ ...formData, targetValue: e.target.value })}
               />
             </div>
           </div>
@@ -429,8 +436,12 @@ export function Goals() {
                         <div key={goal.id} className={`${styles.goalItem} ${!active ? styles.ended : ''}`}>
                           <div className={styles.goalContent}>
                             {GoalIcon && <GoalIcon size={20} weight="regular" className={styles.goalIcon} />}
-                            <span className={styles.periodBadge}>{goal.period}</span>
-                            <span className={styles.goalTarget}>{goal.targetCount}x</span>
+                            <span className={styles.periodBadge}>{goal.period.toUpperCase()}</span>
+                            <span className={styles.goalTarget}>
+                              {habit.trackingMode === 'cumulative' && habit.unit
+                                ? `${goal.targetValue} ${habit.unit}`
+                                : `${goal.targetValue}x`}
+                            </span>
                             <span className={styles.goalDates}>
                               {goal.startDate}{goal.endDate ? ` – ${goal.endDate}` : ' – ongoing'}
                             </span>

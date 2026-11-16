@@ -233,3 +233,31 @@ export function sumProgress(entries: ProgressEntry[], incrementAmount = 1): numb
   const totalCount = entries.reduce((sum, e) => sum + e.count, 0)
   return totalCount * incrementAmount
 }
+
+export async function getProgressInRange(
+  goalId: string,
+  fromDate: string,
+  toDate: string,
+): Promise<ProgressEntry[]> {
+  if (await isAuthenticated()) {
+    const { data, error } = await supabase
+      .from('progress_entries')
+      .select('*')
+      .eq('goal_id', goalId)
+      .gte('entry_date', fromDate)
+      .lte('entry_date', toDate)
+      .order('entry_date', { ascending: true })
+    if (error || !data) return []
+    return data.map((row) => ({
+      id: row.id,
+      goalId: row.goal_id,
+      entryDate: row.entry_date,
+      count: row.count,
+      createdAt: row.created_at,
+    }))
+  } else {
+    return loadDemoProgress().filter(
+      (e) => e.goalId === goalId && e.entryDate >= fromDate && e.entryDate <= toDate,
+    )
+  }
+}

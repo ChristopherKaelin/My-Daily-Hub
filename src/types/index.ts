@@ -42,7 +42,7 @@ export interface Goal {
   habitId: string
   iconKey: string
   period: 'day' | 'week' | 'month'
-  targetCount: number
+  targetValue: number
   startDate: string
   endDate: string | null
   createdAt: string
