@@ -52,6 +52,15 @@
   background-color: #a93226;
 }
 
+.btn-teal {
+  background-color: #0D7C92;
+  color: #ffffff;
+}
+
+.btn-teal:hover:not(:disabled) {
+  background-color: #0A5A6A;
+}
+
 /* ============================================ */
 /* FORMS                                        */
 /* ============================================ */

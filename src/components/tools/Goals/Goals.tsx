@@ -7,6 +7,12 @@ import { formatHabitSummary, formatHabitOptionLabel } from '../../../utils/habit
 import { IconCombobox } from '../../common/IconCombobox'
 import { ICON_REGISTRY } from '../../../data/iconRegistry'
 import ConfirmModal from '../../common/ConfirmModal'
+import { EditButton } from '../../common/EditButton'
+import { AddButton } from '../../common/AddButton'
+import { RefreshButton } from '../../common/RefreshButton'
+import { CancelButton } from '../../common/CancelButton'
+import { EndButton } from '../../common/EndButton'
+import { DeleteButton } from '../../common/DeleteButton'
 import styles from './Goals.module.css'
 
 type Period = 'day' | 'week' | 'month'
@@ -274,21 +280,11 @@ export function Goals() {
       <div className={styles.goalsHeader}>
         <h1>Goals</h1>
         <div className={styles.headerButtons}>
-          <button
-            className="btn btn-secondary"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            aria-label="Refresh goals"
-          >
-            {isRefreshing ? 'Refreshing...' : '⟳ Refresh'}
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => (isFormOpen ? handleCancel() : setIsFormOpen(true))}
-            disabled={activeHabits.length === 0}
-          >
-            {isFormOpen ? '✕ Cancel' : '+ New Goal'}
-          </button>
+          <RefreshButton onClick={handleRefresh} isRefreshing={isRefreshing} label="Refresh goals" />
+          {isFormOpen
+            ? <CancelButton onClick={handleCancel} />
+            : <AddButton onClick={() => setIsFormOpen(true)} label="" disabled={activeHabits.length === 0} />
+          }
         </div>
       </div>
 
@@ -449,30 +445,12 @@ export function Goals() {
                           <div className={styles.goalActions}>
                             {editableGoalIds.has(goal.id) && (
                               <>
-                                <button
-                                  className="btn btn-secondary"
-                                  onClick={() => handleEdit(goal)}
-                                  aria-label={`Edit ${habit.name} ${goal.period} goal`}
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  className="btn btn-danger"
-                                  onClick={() => setConfirmDeleteGoal(goal)}
-                                  aria-label={`Delete ${habit.name} ${goal.period} goal`}
-                                >
-                                  Delete
-                                </button>
+                                <EditButton onClick={() => handleEdit(goal)} label={`Edit ${habit.name} ${goal.period} goal`} />
+                                <DeleteButton onClick={() => setConfirmDeleteGoal(goal)} label={`Delete ${habit.name} ${goal.period} goal`} />
                               </>
                             )}
                             {active && (
-                              <button
-                                className="btn btn-danger"
-                                onClick={() => setConfirmEndGoal(goal)}
-                                aria-label={`End ${habit.name} ${goal.period} goal`}
-                              >
-                                End
-                              </button>
+                              <EndButton onClick={() => setConfirmEndGoal(goal)} label={`End ${habit.name} ${goal.period} goal`} />
                             )}
                           </div>
                         </div>

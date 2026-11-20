@@ -12,6 +12,7 @@ import { Tasks } from './components/tools/Tasks/Tasks'
 import { Habits } from './components/tools/Habits/Habits'
 import { Goals } from './components/tools/Goals/Goals'
 import { Tracker } from './components/tools/Tracker/Tracker'
+import { FavoriteLinks } from './components/tools/FavoriteLinks/FavoriteLinks'
 import Dashboard from './components/tools/Dashboard/Dashboard'
 
 type AppMode = 'loading' | 'authed' | 'demo'
@@ -63,6 +64,7 @@ function App() {
       case 'habits': return <Habits />
       case 'goals': return <Goals />
       case 'tracker': return <Tracker />
+      case 'links': return <FavoriteLinks />
       case 'home': return <Dashboard onNavigate={setActiveTool} />
       default: return <p>Coming soon...</p>
     }

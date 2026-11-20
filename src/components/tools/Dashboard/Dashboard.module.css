@@ -1,28 +1,24 @@
 .dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.dashboardRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
   align-items: start;
 }
 
-/* Tasks card in first row */
-.dashboardRow:last-child {
-  max-width: 400px;
+.dashboardColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
 }
 
-/* Mobile */
+/* Mobile: single column, verse/weather first as before */
 @media (max-width: 675px) {
-  .dashboardRow {
+  .dashboard {
     grid-template-columns: 1fr;
   }
 
-  .dashboardRow:last-child {
-    max-width: 100%;
+  .columnRight {
+    order: -1;
   }
 }

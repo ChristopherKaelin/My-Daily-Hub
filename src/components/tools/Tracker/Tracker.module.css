@@ -25,12 +25,16 @@
 .viewToggle {
   display: flex;
   gap: 0.25rem;
-  background: #e8f4f8;
   border-radius: var(--radius-sm);
   padding: 2px;
 }
 
 .toggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex: 1;
   background: none;
   border: none;
   padding: 0.3rem 0.9rem;
@@ -44,6 +48,7 @@
 
 .toggleBtn:hover {
   background: rgba(19, 72, 96, 0.1);
+  color: var(--color-primary);
 }
 
 .toggleActive {
@@ -66,7 +71,7 @@
   color: var(--track-primary);
   font-size: 1.1rem;
   line-height: 1;
-  padding: 0.3rem 0.6rem;
+  padding: 0.6rem 0.6rem 0.3rem;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -210,6 +215,9 @@
 }
 
 .btnMark {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   background: none;
   border: 2px solid var(--track-primary);
   color: var(--track-primary);
@@ -366,6 +374,103 @@
 
 .calDayFuture {
   opacity: 0.35;
+}
+
+/* Summary Grid (paper-tracker style) */
+.summaryGrid {
+  background: #fff;
+  border: 1px solid #d0e8f0;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-base) var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+.summaryGridMonthLabel {
+  margin: 0 0 0.75rem 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.habitGrid {
+  display: grid;
+  gap: .25rem;
+  width: max-content;
+}
+
+.gridDayHeader {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-align: right;
+  padding: 0 8px 0 6px;
+  margin-right: 8px;
+  height: 26px;
+  min-width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--track-primary);
+  background: none;
+  border: none;
+  transition: background 0.1s;
+}
+
+.gridDayHeader:hover:not(:disabled) {
+  background: #d4edf5;
+}
+
+.gridDayHeader:disabled {
+  cursor: default;
+  opacity: 0.3;
+  color: var(--color-text-secondary);
+}
+
+.gridDayHeaderToday {
+  color: var(--track-secondary);
+  font-weight: 800;
+}
+
+.gridHabitLabel {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--track-primary);
+  white-space: normal;
+  padding: 8px 0;
+  width: 32px;
+  height: 120px;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+
+.gridCell {
+  width: 32px;
+  height: 26px;
+  border-radius: 4px;
+  background: #e8f4f8;
+  cursor: pointer;
+}
+
+.gridCellLogged {
+  background: var(--track-primary);
+}
+
+.gridCellToday {
+  outline: 2px solid var(--track-secondary);
+  outline-offset: -2px;
+}
+
+.gridCellFuture {
+  background: #f0f4f6;
+  opacity: 0.4;
+  cursor: default;
 }
 
 /* Responsive */

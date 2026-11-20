@@ -23,20 +23,34 @@ interface CardItem {
   pct: number
 }
 
+function fmtAmount(value: number): string {
+  return Number(value.toFixed(2)).toString()
+}
+
 function goalProgressLabel(goal: Goal, habit: Habit, periodEntries: ProgressEntry[]): string {
   const totalCount = periodEntries.reduce((sum, e) => sum + e.count, 0)
   if (goal.period === 'day') {
     if (habit.trackingMode === 'cumulative' && habit.incrementAmount && habit.unit) {
-      const current = (totalCount * habit.incrementAmount).toFixed(1).replace(/\.0$/, '')
-      return `${current} ${habit.unit}`
+      return `${fmtAmount(totalCount * habit.incrementAmount)} ${habit.unit}`
     }
     return totalCount > 0 ? 'Done' : 'Not done'
   }
   if (habit.trackingMode === 'cumulative' && habit.incrementAmount && habit.unit) {
-    const current = (totalCount * habit.incrementAmount).toFixed(1).replace(/\.0$/, '')
-    return `${current} / ${goal.targetValue} ${habit.unit}`
+    return `${fmtAmount(totalCount * habit.incrementAmount)} / ${goal.targetValue} ${habit.unit}`
   }
   return `${totalCount} / ${goal.targetValue}`
+}
+
+const PERIOD_ORDER: Record<string, number> = { day: 0, week: 1, month: 2 }
+
+function sortItems(items: CardItem[]): CardItem[] {
+  return [...items].sort((a, b) => {
+    const periodDiff = PERIOD_ORDER[a.goal.period] - PERIOD_ORDER[b.goal.period]
+    if (periodDiff !== 0) return periodDiff
+    const aDone = a.pct >= 100 ? 1 : 0
+    const bDone = b.pct >= 100 ? 1 : 0
+    return aDone - bDone
+  })
 }
 
 function barColor(pct: number): string {
@@ -76,7 +90,7 @@ export function TrackerCard({ onNavigate }: TrackerCardProps) {
         }),
       )
 
-      setItems(loaded.filter((x): x is CardItem => x !== null))
+      setItems(sortItems(loaded.filter((x): x is CardItem => x !== null)))
     } catch (err) {
       setError('Failed to load goals')
       console.error(err)

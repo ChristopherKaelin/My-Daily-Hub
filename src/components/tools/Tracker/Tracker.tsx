@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { ArrowFatLineLeftIcon, ArrowFatLineRightIcon, PlusCircleIcon, MinusCircleIcon, ClipboardTextIcon, PresentationChartIcon, SquareIcon, CheckSquareIcon } from '@phosphor-icons/react'
 import { getHabits } from '../../../services/habitsService'
 import { getAllGoals, getActiveGoals } from '../../../services/goalsService'
 import { getProgressForDate, getProgressInRange, incrementProgress, decrementProgress } from '../../../services/progressService'
@@ -18,6 +19,12 @@ interface TrackerItem {
   periodEntries: ProgressEntry[]
 }
 
+interface SummaryRow {
+  goal: Goal
+  habit: Habit
+  loggedDates: Set<string>
+}
+
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10)
 }
@@ -35,17 +42,20 @@ function periodLabel(period: 'day' | 'week' | 'month'): string {
   return 'Monthly'
 }
 
+function fmtAmount(value: number): string {
+  return Number(value.toFixed(2)).toString()
+}
+
 function goalProgressLabel(goal: Goal, habit: Habit, periodEntries: ProgressEntry[]): string {
   const totalCount = periodEntries.reduce((sum, e) => sum + e.count, 0)
   if (goal.period === 'day') {
     return habit.trackingMode === 'cumulative' && habit.incrementAmount && habit.unit
-      ? `${(totalCount * habit.incrementAmount).toFixed(1).replace(/\.0$/, '')} ${habit.unit} today`
+      ? `${fmtAmount(totalCount * habit.incrementAmount)} ${habit.unit} today`
       : 'Daily goal'
   }
   const periodWord = goal.period === 'week' ? 'this week' : 'this month'
   if (habit.trackingMode === 'cumulative' && habit.incrementAmount && habit.unit) {
-    const current = (totalCount * habit.incrementAmount).toFixed(1).replace(/\.0$/, '')
-    return `${current} / ${goal.targetValue} ${habit.unit} ${periodWord}`
+    return `${fmtAmount(totalCount * habit.incrementAmount)} / ${goal.targetValue} ${habit.unit} ${periodWord}`
   }
   return `${totalCount} / ${goal.targetValue} ${periodWord}`
 }
@@ -61,6 +71,18 @@ function daysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate()
 }
 
+const PERIOD_ORDER: Record<string, number> = { day: 0, week: 1, month: 2 }
+
+function sortItems(items: TrackerItem[]): TrackerItem[] {
+  return [...items].sort((a, b) => {
+    const periodDiff = PERIOD_ORDER[a.goal.period] - PERIOD_ORDER[b.goal.period]
+    if (periodDiff !== 0) return periodDiff
+    const aDone = (a.todayEntry?.count ?? 0) > 0 ? 1 : 0
+    const bDone = (b.todayEntry?.count ?? 0) > 0 ? 1 : 0
+    return aDone - bDone
+  })
+}
+
 export function Tracker() {
   const today = todayISO()
   const [selectedDate, setSelectedDate] = useState(today)
@@ -69,10 +91,16 @@ export function Tracker() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [summaryRows, setSummaryRows] = useState<SummaryRow[]>([])
+  const [summaryLoading, setSummaryLoading] = useState(false)
 
   useEffect(() => {
     loadData()
   }, [selectedDate])
+
+  useEffect(() => {
+    if (view === 'summary') loadSummaryData()
+  }, [view, selectedDate])
 
   async function loadData() {
     try {
@@ -96,12 +124,36 @@ export function Tracker() {
         }),
       )
 
-      setItems(loaded.filter((x): x is TrackerItem => x !== null))
+      setItems(sortItems(loaded.filter((x): x is TrackerItem => x !== null)))
     } catch (err) {
       setError('Failed to load goals')
       console.error(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadSummaryData() {
+    setSummaryLoading(true)
+    try {
+      const [habits, allGoals] = await Promise.all([getHabits(), getAllGoals()])
+      const activeGoals = getActiveGoals(allGoals, selectedDate)
+      const habitMap = new Map(habits.map((h) => [h.id, h]))
+      const from = `${selectedDate.slice(0, 7)}-01`
+      const to = getLastDayOfPeriod(selectedDate, 'month')
+
+      const rows = await Promise.all(
+        activeGoals.map(async (goal) => {
+          const habit = habitMap.get(goal.habitId)
+          if (!habit) return null
+          const entries = await getProgressInRange(goal.id, from, to)
+          const loggedDates = new Set(entries.filter((e) => e.count > 0).map((e) => e.entryDate))
+          return { goal, habit, loggedDates }
+        }),
+      )
+      setSummaryRows(rows.filter((x): x is SummaryRow => x !== null))
+    } finally {
+      setSummaryLoading(false)
     }
   }
 
@@ -134,22 +186,12 @@ export function Tracker() {
 
   const isToday = selectedDate === today
 
-  // Calendar summary helpers
-  function buildCalendarMonth(goal: Goal) {
-    const [year, month] = selectedDate.split('-').map(Number)
-    const firstDay = `${selectedDate.slice(0, 7)}-01`
-    const lastDay = getLastDayOfPeriod(selectedDate, 'month')
-    const days = daysInMonth(year, month)
-    // day-of-week offset: Monday=0
-    const startDow = (new Date(firstDay + 'T00:00:00').getDay() + 6) % 7
-    const entryDates = new Set(
-      items
-        .find((it) => it.goal.id === goal.id)
-        ?.periodEntries.filter((e) => e.count > 0)
-        .map((e) => e.entryDate) ?? [],
-    )
-    return { year, month, days, startDow, entryDates, firstDay, lastDay }
-  }
+  const [summYear, summMonth] = selectedDate.split('-').map(Number)
+  const summDays = daysInMonth(summYear, summMonth)
+  const summMonthName = new Date(summYear, summMonth - 1, 1).toLocaleString(undefined, {
+    month: 'long',
+    year: 'numeric',
+  })
 
   return (
     <div className={`${styles.trackerPage} zone-action`}>
@@ -160,19 +202,19 @@ export function Tracker() {
             className={`${styles.toggleBtn} ${view === 'log' ? styles.toggleActive : ''}`}
             onClick={() => setView('log')}
           >
-            Log
+            <ClipboardTextIcon size={14} weight="bold" /> Log
           </button>
           <button
             className={`${styles.toggleBtn} ${view === 'summary' ? styles.toggleActive : ''}`}
             onClick={() => setView('summary')}
           >
-            Summary
+            <PresentationChartIcon size={14} weight="bold" /> Summary
           </button>
         </div>
       </div>
 
       <div className={styles.dateNav}>
-        <button className={styles.dateBtn} onClick={() => shiftDate(-1)}>‹</button>
+        <button className={styles.dateBtn} onClick={() => shiftDate(-1)}><ArrowFatLineLeftIcon size={20} weight="bold" /></button>
         <span className={styles.dateLabel}>
           {new Date(selectedDate + 'T00:00:00').toLocaleDateString(undefined, {
             weekday: 'short',
@@ -184,7 +226,7 @@ export function Tracker() {
           className={styles.dateBtn}
           onClick={() => shiftDate(1)}
           disabled={isToday}
-        >›</button>
+        ><ArrowFatLineRightIcon size={20} weight="bold" /></button>
         {!isToday && (
           <button className={styles.todayBtn} onClick={() => setSelectedDate(today)}>
             Today
@@ -233,7 +275,7 @@ export function Tracker() {
                       onClick={() => handleDecrement(goal.id)}
                       disabled={busy}
                     >
-                      ✓ Done
+                      <CheckSquareIcon size={20} weight="bold" /> Completed
                     </button>
                   ) : (
                     <button
@@ -241,7 +283,7 @@ export function Tracker() {
                       onClick={() => handleIncrement(goal.id)}
                       disabled={busy}
                     >
-                      Mark done
+                      <SquareIcon size={20} weight="bold" /> Complete
                     </button>
                   )
                 ) : (
@@ -250,13 +292,17 @@ export function Tracker() {
                       className={styles.btnCount}
                       onClick={() => handleDecrement(goal.id)}
                       disabled={busy || !todayEntry || todayEntry.count <= 0}
-                    >−</button>
-                    <span className={styles.countValue}>{todayEntry?.count ?? 0}</span>
+                    ><MinusCircleIcon size={20} weight="bold" /></button>
+                    <span className={styles.countValue}>
+                      {habit.trackingMode === 'cumulative' && habit.incrementAmount
+                        ? fmtAmount((todayEntry?.count ?? 0) * habit.incrementAmount)
+                        : (todayEntry?.count ?? 0)}
+                    </span>
                     <button
                       className={styles.btnCount}
                       onClick={() => handleIncrement(goal.id)}
                       disabled={busy}
-                    >+</button>
+                    ><PlusCircleIcon size={20} weight="bold" /></button>
                   </div>
                 )}
               </div>
@@ -275,54 +321,66 @@ export function Tracker() {
         )
       })}
 
-      {!loading && !error && view === 'summary' && items.map(({ goal, habit }) => {
-        const { year, month, days, startDow, entryDates } = buildCalendarMonth(goal)
-        const IconComp = ICON_REGISTRY[goal.iconKey]
-        const monthName = new Date(year, month - 1, 1).toLocaleString(undefined, { month: 'long', year: 'numeric' })
-
-        return (
-          <div key={goal.id} className={styles.summaryCard}>
-            <div className={styles.goalInfo}>
-              {IconComp && <IconComp size={18} weight="duotone" className={styles.goalIcon} />}
-              <p className={styles.habitName}>{habit.name}</p>
-              <span className={`${styles.periodBadge} ${styles[`period_${goal.period}`]}`}>
-                {periodLabel(goal.period)}
-              </span>
-            </div>
-            <p className={styles.monthLabel}>{monthName}</p>
-            <div className={styles.calendarGrid}>
-              {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                <span key={i} className={styles.calDayHeader}>{d}</span>
-              ))}
-              {Array.from({ length: startDow }).map((_, i) => (
-                <span key={`pad-${i}`} />
-              ))}
-              {Array.from({ length: days }, (_, i) => {
-                const dayNum = i + 1
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`
-                const done = entryDates.has(dateStr)
-                const isCurrentDay = dateStr === today
-                const isFuture = dateStr > today
+      {!loading && !error && view === 'summary' && (
+        <div className={styles.summaryGrid}>
+          <p className={styles.summaryGridMonthLabel}>{summMonthName}</p>
+          {summaryLoading ? (
+            <p className={styles.stateMsg}>Loading...</p>
+          ) : (
+            <div
+              className={styles.habitGrid}
+              style={{ gridTemplateColumns: `auto repeat(${summaryRows.length}, 44px)` }}
+            >
+              {/* Header row: empty corner + one habit label per column */}
+              <div />
+              {summaryRows.map(({ goal, habit }) => {
                 return (
-                  <span
-                    key={dateStr}
-                    className={[
-                      styles.calDay,
-                      done ? styles.calDayDone : '',
-                      isCurrentDay ? styles.calDayToday : '',
-                      isFuture ? styles.calDayFuture : '',
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
-                  >
-                    {dayNum}
-                  </span>
+                  <div key={goal.id} className={styles.gridHabitLabel}>
+                    <span>{habit.name}</span>
+                  </div>
+                )
+              })}
+
+              {/* One row per day */}
+              {Array.from({ length: summDays }, (_, i) => {
+                const dayNum = i + 1
+                const dateStr = `${summYear}-${String(summMonth).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`
+                const isFuture = dateStr > today
+                const isCurrentDay = dateStr === today
+                return (
+                  <React.Fragment key={dayNum}>
+                    <button
+                      className={[
+                        styles.gridDayHeader,
+                        isCurrentDay ? styles.gridDayHeaderToday : '',
+                      ].filter(Boolean).join(' ')}
+                      disabled={isFuture}
+                      onClick={() => { setSelectedDate(dateStr); setView('log') }}
+                    >
+                      {dayNum}
+                    </button>
+                    {summaryRows.map(({ goal, loggedDates }) => {
+                      const logged = loggedDates.has(dateStr)
+                      return (
+                        <div
+                          key={goal.id}
+                          className={[
+                            styles.gridCell,
+                            logged ? styles.gridCellLogged : '',
+                            isCurrentDay ? styles.gridCellToday : '',
+                            isFuture ? styles.gridCellFuture : '',
+                          ].filter(Boolean).join(' ')}
+                          onClick={isFuture ? undefined : () => { setSelectedDate(dateStr); setView('log') }}
+                        />
+                      )
+                    })}
+                  </React.Fragment>
                 )
               })}
             </div>
-          </div>
-        )
-      })}
+          )}
+        </div>
+      )}
     </div>
   )
 }

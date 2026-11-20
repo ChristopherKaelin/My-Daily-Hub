@@ -3,6 +3,12 @@ import { getTasks, createTask, updateTask, deleteTask, completeTask, uncompleteT
 import { type Task } from '../../../types'
 import { formatUserDate } from '../../../utils/dateFormatter'
 import ConfirmModal from '../../common/ConfirmModal'
+import { EditButton } from '../../common/EditButton'
+import { AddButton } from '../../common/AddButton'
+import { RefreshButton } from '../../common/RefreshButton'
+import { CancelButton } from '../../common/CancelButton'
+import { DeleteButton } from '../../common/DeleteButton'
+import { CopyButton } from '../../common/CopyButton'
 import styles from './Tasks.module.css'
 
 export function Tasks() {
@@ -180,20 +186,11 @@ export function Tasks() {
       <div className={styles.tasksHeader}>
         <h1>To Do List</h1>
         <div className={styles.headerButtons}>
-          <button
-            className="btn btn-secondary"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            aria-label="Refresh tasks"
-          >
-            {isRefreshing ? 'Refreshing...' : '⟳ Refresh'}
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => setIsFormOpen(!isFormOpen)}
-          >
-            {isFormOpen ? '✕ Cancel' : '+ New Task'}
-          </button>
+          <RefreshButton onClick={handleRefresh} isRefreshing={isRefreshing} label="Refresh tasks" />
+          {isFormOpen
+            ? <CancelButton onClick={() => setIsFormOpen(false)} />
+            : <AddButton onClick={() => setIsFormOpen(true)} label="" />
+          }
         </div>
       </div>
 
@@ -297,62 +294,51 @@ export function Tasks() {
               key={task.id}
               className={`${styles.taskItem} ${task.isComplete ? styles.complete : ''}`}
             >
-              <div className={styles.taskCheckbox}>
-                <input
-                  type="checkbox"
-                  checked={task.isComplete}
-                  onChange={() => handleToggleComplete(task)}
-                  aria-label={`Mark ${task.title} as ${task.isComplete ? 'incomplete' : 'complete'}`}
-                />
-              </div>
+              <div className={styles.taskRow}>
+                <div className={styles.taskCheckbox}>
+                  <input
+                    type="checkbox"
+                    checked={task.isComplete}
+                    onChange={() => handleToggleComplete(task)}
+                    aria-label={`Mark ${task.title} as ${task.isComplete ? 'incomplete' : 'complete'}`}
+                  />
+                </div>
 
-              <div className={styles.taskContent}>
-                <div className={styles.taskHeader}>
-                  <h3 className={styles.taskTitle}>{task.title}</h3>
-                  <div className={styles.taskMeta}>
-                    <span className={`${styles.priorityBadge} ${styles[`priority${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`]}`}>
-                      {task.priority}
-                    </span>
-                    {task.dueDate && (
-                      <span className={`${styles.dueDate} ${dueDateStatus === 'overdue' ? styles.overdue : ''} ${dueDateStatus === 'dueSoon' ? styles.dueSoon : ''}`}>
-                        {formatUserDate(task.dueDate)}
+                <div className={styles.taskContent}>
+                  <div className={styles.taskHeader}>
+                    <h3 className={styles.taskTitle}>{task.title}</h3>
+                    <div className={styles.taskMeta}>
+                      <span className={`${styles.priorityBadge} ${styles[`priority${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`]}`}>
+                        {task.priority}
                       </span>
-                    )}
+                      {task.dueDate && (
+                        <span className={`${styles.dueDate} ${dueDateStatus === 'overdue' ? styles.overdue : ''} ${dueDateStatus === 'dueSoon' ? styles.dueSoon : ''}`}>
+                          {formatUserDate(task.dueDate)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {task.description && (
-                  <p className={styles.taskDescription}>{task.description}</p>
-                )}
-              </div>
-
-              <div className={styles.taskActions}>
                 <div className={styles.taskActionsRow}>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => handleEdit(task)}
-                    aria-label={`Edit ${task.title}`}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-danger"
+                  <EditButton onClick={() => handleEdit(task)} label={`Edit ${task.title}`} />
+                  <CopyButton
+                    onClick={() => handleCopy(task)}
+                    copied={copiedTaskId === task.id}
+                    label={`Copy ${task.title} text`}
+                  />
+                  <DeleteButton
                     onClick={() => setConfirmDeleteId(task.id)}
                     disabled={!task.isComplete}
-                    aria-label={`Delete ${task.title}`}
-                    title={!task.isComplete ? 'Only completed tasks can be deleted' : ''}
-                  >
-                    Delete
-                  </button>
+                    label={`Delete ${task.title}`}
+                    title={!task.isComplete ? 'Only completed tasks can be deleted' : `Delete ${task.title}`}
+                  />
                 </div>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => handleCopy(task)}
-                  aria-label={`Copy ${task.title} text`}
-                >
-                  {copiedTaskId === task.id ? '✓ Copied' : 'Copy'}
-                </button>
               </div>
+
+              {task.description && (
+                <p className={styles.taskDescription}>{task.description}</p>
+              )}
             </div>
             )
           })}

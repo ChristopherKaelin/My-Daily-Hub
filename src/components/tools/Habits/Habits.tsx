@@ -4,6 +4,13 @@ import { getGoalsForHabit } from '../../../services/goalsService'
 import { type Habit } from '../../../types'
 import { formatIncrementDetail } from '../../../utils/habitFormatting'
 import ConfirmModal from '../../common/ConfirmModal'
+import { LockKeyIcon } from '@phosphor-icons/react'
+import { EditButton } from '../../common/EditButton'
+import { AddButton } from '../../common/AddButton'
+import { RefreshButton } from '../../common/RefreshButton'
+import { CancelButton } from '../../common/CancelButton'
+import { DeleteButton } from '../../common/DeleteButton'
+import { ArchiveButton } from '../../common/ArchiveButton'
 import styles from './Habits.module.css'
 
 type TrackingMode = 'boolean' | 'frequency' | 'cumulative'
@@ -177,20 +184,11 @@ export function Habits() {
       <div className={styles.habitsHeader}>
         <h1>Habits</h1>
         <div className={styles.headerButtons}>
-          <button
-            className="btn btn-secondary"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            aria-label="Refresh habits"
-          >
-            {isRefreshing ? 'Refreshing...' : '⟳ Refresh'}
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => (isFormOpen ? handleCancel() : setIsFormOpen(true))}
-          >
-            {isFormOpen ? '✕ Cancel' : '+ New Habit'}
-          </button>
+          <RefreshButton onClick={handleRefresh} isRefreshing={isRefreshing} label="Refresh habits" />
+          {isFormOpen
+            ? <CancelButton onClick={handleCancel} />
+            : <AddButton onClick={() => setIsFormOpen(true)} label="" />
+          }
         </div>
       </div>
 
@@ -409,46 +407,30 @@ function HabitItem({
       <div className={styles.habitActions}>
         <span className={styles.trackingModeBadge}>{habit.trackingMode}</span>
         {!isArchived && !hasGoals && (
-          <button
-            className="btn btn-secondary"
-            onClick={() => onEdit(habit)}
-            aria-label={`Edit ${habit.name}`}
-          >
-            Edit
-          </button>
+          <EditButton onClick={() => onEdit(habit)} label={`Edit ${habit.name}`} />
         )}
         {hasGoals && (
           <span className={styles.editLockedHint} title="This habit has goal history, so it can't be edited">
-            Locked
+            <LockKeyIcon size={16} weight="bold" />
           </span>
         )}
 
         {hasGoals ? (
-          <button
-            className={isArchived ? 'btn btn-secondary' : 'btn btn-danger'}
+          <ArchiveButton
+            isArchived={isArchived}
             onClick={() => onToggleArchive(habit)}
-            aria-label={`${isArchived ? 'Unarchive' : 'Archive'} ${habit.name}`}
-          >
-            {isArchived ? 'Unarchive' : 'Archive'}
-          </button>
+            label={`${isArchived ? 'Unarchive' : 'Archive'} ${habit.name}`}
+          />
         ) : (
           <>
             {isArchived && (
-              <button
-                className="btn btn-secondary"
+              <ArchiveButton
+                isArchived
                 onClick={() => onToggleArchive(habit)}
-                aria-label={`Unarchive ${habit.name}`}
-              >
-                Unarchive
-              </button>
+                label={`Unarchive ${habit.name}`}
+              />
             )}
-            <button
-              className="btn btn-danger"
-              onClick={() => onDelete(habit)}
-              aria-label={`Delete ${habit.name}`}
-            >
-              Delete
-            </button>
+            <DeleteButton onClick={() => onDelete(habit)} label={`Delete ${habit.name}`} />
           </>
         )}
       </div>

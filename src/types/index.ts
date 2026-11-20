@@ -57,6 +57,17 @@ export interface ProgressEntry {
   createdAt: string
 }
 
+// Favorite Links
+export interface FavoriteLink {
+  id: string
+  userId: string
+  title: string
+  url: string
+  displayOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
 // Demo mode storage keys
 export const DEMO_STORAGE_KEYS = {
   USER_SETTINGS: 'mdh_demo_user_settings',

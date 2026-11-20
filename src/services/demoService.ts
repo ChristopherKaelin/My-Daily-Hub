@@ -215,8 +215,37 @@ export function initializeDemoData(): void {
   localStorage.setItem(DEMO_STORAGE_KEYS.GOALS, JSON.stringify(sampleGoals))
   localStorage.setItem(DEMO_STORAGE_KEYS.PROGRESS_ENTRIES, JSON.stringify(sampleProgressEntries))
 
-  // Placeholder empty arrays for future phases
-  localStorage.setItem(DEMO_STORAGE_KEYS.FAVORITE_LINKS, JSON.stringify([]))
+  // Sample favorite links
+  const sampleLinks = [
+    {
+      id: crypto.randomUUID(),
+      userId: 'demo',
+      title: 'GitHub',
+      url: 'https://github.com',
+      displayOrder: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      userId: 'demo',
+      title: 'MDN Web Docs',
+      url: 'https://developer.mozilla.org',
+      displayOrder: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      userId: 'demo',
+      title: 'Stack Overflow',
+      url: 'https://stackoverflow.com',
+      displayOrder: 2,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ]
+  localStorage.setItem(DEMO_STORAGE_KEYS.FAVORITE_LINKS, JSON.stringify(sampleLinks))
   localStorage.setItem(DEMO_STORAGE_KEYS.FAVORITE_QUOTES, JSON.stringify([]))
   localStorage.setItem(DEMO_STORAGE_KEYS.KEY_DATES, JSON.stringify([]))
   localStorage.setItem(DEMO_STORAGE_KEYS.JOURNAL_ENTRIES, JSON.stringify([]))
